@@ -93,26 +93,26 @@ const { ccclass, property } = cc._decorator;
 @ccclass
 export default class PlayerController extends cc.Component {
     @property(cc.Node)
-    targetNode: cc.Node = null;
+    public targetNode: cc.Node = null;
 
     @property
-    moveSpeed: number = 100;
+    public moveSpeed: number = 100;
 
     private currentHealth: number = 100;
     private static readonly MAX_HEALTH: number = 100;
 
-    onLoad(): void {
+    protected onLoad(): void {
         if (!this.targetNode) {
             throw new Error("PlayerController: targetNode 未赋值");
         }
         this.node.on(cc.Node.EventType.TOUCH_START, this.onTouchStart, this);
     }
 
-    start(): void {
+    protected start(): void {
         // 所有组件 onLoad 完成后，安全引用其他组件
     }
 
-    onDestroy(): void {
+    protected onDestroy(): void {
         this.node.off(cc.Node.EventType.TOUCH_START, this.onTouchStart, this);
     }
 

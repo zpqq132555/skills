@@ -29,15 +29,15 @@ const { ccclass, property } = cc._decorator;
 @ccclass
 export default class PlayerController extends cc.Component {
     @property(cc.Node)
-    targetNode: cc.Node = null;
+    public targetNode: cc.Node = null;
 
     @property
-    moveSpeed: number = 100;
+    public moveSpeed: number = 100;
 
     @property(cc.Label)
-    scoreLabel: cc.Label = null;
+    public scoreLabel: cc.Label = null;
 
-    onLoad(): void {
+    protected onLoad(): void {
         // 初始化逻辑
     }
 }
@@ -93,66 +93,66 @@ const { ccclass, property } = cc._decorator;
 export default class PropertyExamples extends cc.Component {
     // ✅ 基本类型
     @property
-    integerValue: number = 0;
+    public integerValue: number = 0;
 
     @property
-    floatValue: number = 0.0;
+    public floatValue: number = 0.0;
 
     @property
-    stringValue: string = "";
+    public stringValue: string = "";
 
     @property
-    boolValue: boolean = false;
+    public boolValue: boolean = false;
 
     // ✅ 节点引用
     @property(cc.Node)
-    playerNode: cc.Node = null;
+    public playerNode: cc.Node = null;
 
     // ✅ 组件引用
     @property(cc.Sprite)
-    spriteComp: cc.Sprite = null;
+    public spriteComp: cc.Sprite = null;
 
     @property(cc.Label)
-    labelComp: cc.Label = null;
+    public labelComp: cc.Label = null;
 
     @property(cc.Animation)
-    animComp: cc.Animation = null;
+    public animComp: cc.Animation = null;
 
     // ✅ 资源引用
     @property(cc.SpriteFrame)
-    iconFrame: cc.SpriteFrame = null;
+    public iconFrame: cc.SpriteFrame = null;
 
     @property(cc.Prefab)
-    bulletPrefab: cc.Prefab = null;
+    public bulletPrefab: cc.Prefab = null;
 
     @property(cc.AudioClip)
-    bgmClip: cc.AudioClip = null;
+    public bgmClip: cc.AudioClip = null;
 
     @property(cc.SpriteAtlas)
-    uiAtlas: cc.SpriteAtlas = null;
+    public uiAtlas: cc.SpriteAtlas = null;
 
     // ✅ 数组
     @property([cc.Node])
-    enemyNodes: cc.Node[] = [];
+    public enemyNodes: cc.Node[] = [];
 
     @property([cc.SpriteFrame])
-    frames: cc.SpriteFrame[] = [];
+    public frames: cc.SpriteFrame[] = [];
 
     // ✅ 枚举
     @property({ type: cc.Enum(Direction) })
-    direction: Direction = Direction.UP;
+    public direction: Direction = Direction.UP;
 
     // ✅ 显示名称和提示
     @property({ displayName: "移动速度", tooltip: "角色移动速度" })
-    moveSpeed: number = 100;
+    public moveSpeed: number = 100;
 
     // ✅ 范围限制
     @property({ type: cc.Float, range: [0, 1, 0.01] })
-    volume: number = 1.0;
+    public volume: number = 1.0;
 
     // ✅ 只读（在属性检查器中不可编辑）
     @property({ readonly: true })
-    version: string = "1.0.0";
+    public version: string = "1.0.0";
 }
 ```
 
@@ -228,7 +228,7 @@ export default class LifecycleDemo extends cc.Component {
      * - 总是在 start 之前执行
      * - 只调用一次
      */
-    onLoad(): void {
+    protected onLoad(): void {
         // 验证必要引用
         if (!this.targetNode) {
             throw new Error("LifecycleDemo: targetNode 未赋值");
@@ -246,7 +246,7 @@ export default class LifecycleDemo extends cc.Component {
      * - 注册事件（与 onDisable 配对）
      * - 可多次调用
      */
-    onEnable(): void {
+    protected onEnable(): void {
         this.node.on(cc.Node.EventType.TOUCH_START, this.onTouchStart, this);
         cc.systemEvent.on(cc.SystemEvent.EventType.KEY_DOWN, this.onKeyDown, this);
     }
@@ -257,7 +257,7 @@ export default class LifecycleDemo extends cc.Component {
      * - 初始化需要经常修改的数据
      * - 只调用一次
      */
-    start(): void {
+    protected start(): void {
         const otherComp = this.node.getComponent("OtherScript");
         this._timer = 0;
     }
@@ -267,7 +267,7 @@ export default class LifecycleDemo extends cc.Component {
      * - 游戏逻辑更新
      * - 注意：避免在此处分配内存
      */
-    update(dt: number): void {
+    protected update(dt: number): void {
         this._timer += dt;
         this.node.x += this.moveSpeed * dt;
     }
@@ -277,7 +277,7 @@ export default class LifecycleDemo extends cc.Component {
      * - 用于需要在动画/物理更新后执行的逻辑
      * - 如相机跟随
      */
-    lateUpdate(dt: number): void {
+    protected lateUpdate(dt: number): void {
         // 相机跟随逻辑
     }
 
@@ -286,7 +286,7 @@ export default class LifecycleDemo extends cc.Component {
      * - 注销事件（与 onEnable 配对）
      * - 可多次调用
      */
-    onDisable(): void {
+    protected onDisable(): void {
         this.node.off(cc.Node.EventType.TOUCH_START, this.onTouchStart, this);
         cc.systemEvent.off(cc.SystemEvent.EventType.KEY_DOWN, this.onKeyDown, this);
     }
@@ -297,7 +297,7 @@ export default class LifecycleDemo extends cc.Component {
      * - 停止缓动动画
      * - 释放动态加载的资源
      */
-    onDestroy(): void {
+    protected onDestroy(): void {
         cc.Tween.stopAllByTarget(this.node);
         // 释放动态加载的资源
         if (this._dynamicTexture) {

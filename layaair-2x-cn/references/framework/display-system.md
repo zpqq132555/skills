@@ -52,29 +52,29 @@ class EnemyScript extends Laya.Script {
     private _spriteOwner: Laya.Sprite;
     private _isAlive: boolean = true;
 
-    onAwake(): void {
+    public onAwake(): void {
         this._spriteOwner = this.owner as Laya.Sprite;
     }
 
-    onEnable(): void {
+    public onEnable(): void {
         this._spriteOwner.on(Laya.Event.CLICK, this, this.onClicked);
     }
 
-    onStart(): void {
+    public onStart(): void {
         // 跨组件初始化
         this._isAlive = true;
     }
 
-    onUpdate(): void {
+    public onUpdate(): void {
         if (!this._isAlive) return;
         // 更新逻辑
     }
 
-    onDisable(): void {
+    public onDisable(): void {
         this._spriteOwner.off(Laya.Event.CLICK, this, this.onClicked);
     }
 
-    onDestroy(): void {
+    public onDestroy(): void {
         this._spriteOwner = null;
         this.targetNode = null;
         Laya.timer.clearAll(this);

@@ -159,7 +159,7 @@ onDisable() {
 export class ResourceHolder extends Component {
     private _loadedAssets: Asset[] = [];
 
-    loadAsset(path: string, type: typeof Asset) {
+    public loadAsset(path: string, type: typeof Asset) {
         resources.load(path, type, (err, asset) => {
             if (err) return;
             asset.addRef();
@@ -167,7 +167,7 @@ export class ResourceHolder extends Component {
         });
     }
 
-    onDestroy() {
+    protected onDestroy() {
         // 释放所有持有的资源
         for (const asset of this._loadedAssets) {
             asset.decRef();
@@ -248,7 +248,7 @@ export class PlayerHealth extends Component {
 export class Example extends Component {
     // public: 编辑器属性 + 外部 API
     @property
-    speed = 10;
+    private readonly speed = 10;
     
     // protected: 子类可访问
     protected _state = GameState.Idle;
@@ -258,7 +258,7 @@ export class Example extends Component {
     private _cache: Map<string, any> = new Map();
 
     // public 方法：对外接口
-    startGame() { /* ... */ }
+    public startGame() { /* ... */ }
     
     // private 方法：内部实现
     private calculateScore() { /* ... */ }
@@ -294,13 +294,13 @@ if (DEBUG) {
 
 // ✅ 封装日志工具
 class Logger {
-    static log(msg: string, ...args: any[]) {
+    public static log(msg: string, ...args: any[]) {
         if (DEBUG) console.log(`[Game] ${msg}`, ...args);
     }
-    static warn(msg: string, ...args: any[]) {
+    public static warn(msg: string, ...args: any[]) {
         if (DEBUG) console.warn(`[Game] ${msg}`, ...args);
     }
-    static error(msg: string, ...args: any[]) {
+    public static error(msg: string, ...args: any[]) {
         console.error(`[Game] ${msg}`, ...args); // 错误始终输出
     }
 }

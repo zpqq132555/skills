@@ -83,41 +83,41 @@ Enum(Direction);
 export class TypeExample extends Component {
     // 自动推导类型
     @property
-    speed = 10;                    // → CCFloat
+    private readonly speed = 10;                    // → CCFloat
 
     @property
-    name = 'player';               // → CCString
+    private readonly name = 'player';               // → CCString
 
     @property
-    active = true;                 // → CCBoolean
+    private readonly active = true;                 // → CCBoolean
 
     // 显式指定 cc 类型
     @property(Node)
-    target: Node | null = null;    // 等价于 @property({type: Node})
+    private readonly target: Node | null = null;    // 等价于 @property({type: Node})
 
     // 数组类型
     @property({ type: [Node] })
-    children: Node[] = [];
+    private readonly children: Node[] = [];
 
     // 整数简写
     @integer
-    count = 0;
+    private readonly count = 0;
 
     // 浮点简写
     @float
-    ratio = 1.0;
+    private readonly ratio = 1.0;
 
     // 枚举类型
     @property({ type: Direction })
-    dir: Direction = Direction.Up;
+    private readonly dir: Direction = Direction.Up;
 
     // 基础类型数组
     @property({ type: [CCInteger] })
-    scores: number[] = [];
+    private readonly scores: number[] = [];
 
     // 以 _ 开头：序列化但不显示在面板
     @property
-    _cachedValue = '';
+    private readonly _cachedValue = '';
 }
 ```
 
@@ -199,7 +199,7 @@ export class LifecycleDemo extends Component {
      * - 可安全获取其他组件引用
      * - 不要在此处理依赖其他组件 onLoad 完成的逻辑
      */
-    onLoad() {
+    protected onLoad() {
         this._pool = new NodePool('Bullet');
     }
 
@@ -208,7 +208,7 @@ export class LifecycleDemo extends Component {
      * - 与 onDisable 配对
      * - 可能被多次调用
      */
-    onEnable() {
+    protected onEnable() {
         input.on(Input.EventType.TOUCH_START, this.onTouch, this);
         this.node.on(Node.EventType.TOUCH_START, this.onNodeTouch, this);
     }
@@ -218,7 +218,7 @@ export class LifecycleDemo extends Component {
      * - 可确保同场景所有组件的 onLoad 已完成
      * - 只调用一次
      */
-    start() {
+    protected start() {
         const otherComp = find('Canvas/Manager')?.getComponent(GameManager);
         // 安全使用 otherComp
     }
@@ -227,7 +227,7 @@ export class LifecycleDemo extends Component {
      * update: 每帧逻辑
      * - dt 为上一帧耗时（秒）
      */
-    update(dt: number) {
+    protected update(dt: number) {
         this.node.angle += this.rotateSpeed * dt;
     }
 
@@ -236,7 +236,7 @@ export class LifecycleDemo extends Component {
      * - 在所有 update 之后
      * - 适合相机跟随、最终位置调整
      */
-    lateUpdate(dt: number) {
+    protected lateUpdate(dt: number) {
         // 相机跟随逻辑
     }
 
@@ -244,7 +244,7 @@ export class LifecycleDemo extends Component {
      * onDisable: 注销事件监听
      * - 与 onEnable 配对
      */
-    onDisable() {
+    protected onDisable() {
         input.off(Input.EventType.TOUCH_START, this.onTouch, this);
         this.node.off(Node.EventType.TOUCH_START, this.onNodeTouch, this);
     }
@@ -254,7 +254,7 @@ export class LifecycleDemo extends Component {
      * - 释放动态加载的资源
      * - 清理对象池
      */
-    onDestroy() {
+    protected onDestroy() {
         this._pool?.clear();
         this._pool = null;
     }

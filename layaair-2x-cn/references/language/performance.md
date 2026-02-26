@@ -106,14 +106,14 @@ class EnemyScript extends Laya.Script {
     private _isAlive: boolean = true;
 
     // ❌ 性能差
-    onUpdate(): void {
+    public onUpdate(): void {
         const children = Laya.stage.numChildren;  // 每帧读取
         const pos = new Laya.Point(this.owner.x, this.owner.y);  // 每帧创建
         this._target = this.owner.getChildByName("target") as Laya.Sprite; // 每帧搜索
     }
 
     // ✅ 正确优化
-    onStart(): void {
+    public onStart(): void {
         // 缓存引用
         this._target = Laya.stage.getChildByName("hero") as Laya.Sprite;
     }
@@ -122,7 +122,7 @@ class EnemyScript extends Laya.Script {
     private _dx: number = 0;
     private _dy: number = 0;
 
-    onUpdate(): void {
+    public onUpdate(): void {
         if (!this._isAlive || !this._target) return;  // 早退出
 
         this._dx = this._target.x - (this.owner as Laya.Sprite).x;

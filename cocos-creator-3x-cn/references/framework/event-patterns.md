@@ -113,21 +113,21 @@ import { _decorator, Component, Node, EventTouch } from 'cc';
 
 @ccclass('NodeEventDemo')
 export class NodeEventDemo extends Component {
-    onEnable() {
+    protected onEnable() {
         this.node.on(Node.EventType.TOUCH_START, this.onTouchStart, this);
         this.node.on(Node.EventType.TOUCH_MOVE, this.onTouchMove, this);
         this.node.on(Node.EventType.TOUCH_END, this.onTouchEnd, this);
         this.node.on(Node.EventType.TOUCH_CANCEL, this.onTouchCancel, this);
     }
 
-    onDisable() {
+    protected onDisable() {
         this.node.off(Node.EventType.TOUCH_START, this.onTouchStart, this);
         this.node.off(Node.EventType.TOUCH_MOVE, this.onTouchMove, this);
         this.node.off(Node.EventType.TOUCH_END, this.onTouchEnd, this);
         this.node.off(Node.EventType.TOUCH_CANCEL, this.onTouchCancel, this);
     }
 
-    onTouchStart(event: EventTouch) {
+    private onTouchStart(event: EventTouch) {
         // event.getUILocation() — UI 坐标
         // event.propagationStopped = true — 阻止冒泡
     }
@@ -226,7 +226,7 @@ import { EventTarget } from 'cc';
 // 创建事件总线（推荐单例模式）
 class GameEvents {
     private static _instance: EventTarget;
-    static get instance(): EventTarget {
+    public static get instance(): EventTarget {
         if (!this._instance) {
             this._instance = new EventTarget();
         }
@@ -267,15 +267,15 @@ interface GameEventMap {
 class TypedEventTarget {
     private _et = new EventTarget();
 
-    on<K extends keyof GameEventMap>(type: K, callback: GameEventMap[K], target?: any) {
+    public on<K extends keyof GameEventMap>(type: K, callback: GameEventMap[K], target?: any) {
         this._et.on(type, callback as any, target);
     }
 
-    off<K extends keyof GameEventMap>(type: K, callback: GameEventMap[K], target?: any) {
+    public off<K extends keyof GameEventMap>(type: K, callback: GameEventMap[K], target?: any) {
         this._et.off(type, callback as any, target);
     }
 
-    emit<K extends keyof GameEventMap>(type: K, ...args: Parameters<GameEventMap[K]>) {
+    public emit<K extends keyof GameEventMap>(type: K, ...args: Parameters<GameEventMap[K]>) {
         this._et.emit(type, ...args);
     }
 }
@@ -288,7 +288,7 @@ import { Event } from 'cc';
 
 // 自定义事件类（不要直接 new Event，它是抽象类）
 class DamageEvent extends Event {
-    damage: number;
+    public readonly damage: number;
     constructor(damage: number, bubbles = true) {
         super('damage', bubbles);
         this.damage = damage;
@@ -316,22 +316,22 @@ const { ccclass, property } = _decorator;
 @ccclass('RaycastTouch')
 export class RaycastTouch extends Component {
     @property(Camera)
-    readonly cameraCom!: Camera;
+    private readonly cameraCom!: Camera;
 
     @property(Node)
-    targetNode!: Node;
+    private readonly targetNode!: Node;
 
     private _ray = new geometry.Ray();
 
-    onEnable() {
+    protected onEnable() {
         input.on(Input.EventType.TOUCH_START, this.onTouchStart, this);
     }
 
-    onDisable() {
+    protected onDisable() {
         input.off(Input.EventType.TOUCH_START, this.onTouchStart, this);
     }
 
-    onTouchStart(event: EventTouch) {
+    private onTouchStart(event: EventTouch) {
         const touch = event.touch!;
         this.cameraCom.screenPointToRay(touch.getLocationX(), touch.getLocationY(), this._ray);
         if (PhysicsSystem.instance.raycast(this._ray)) {

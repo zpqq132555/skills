@@ -11,13 +11,13 @@
 ```typescript
 // ✅ 标准配对模式
 class PlayerScript extends Laya.Script {
-    onEnable(): void {
+    public onEnable(): void {
         // 注册事件
         this.owner.on(Laya.Event.CLICK, this, this.onClick);
         Laya.stage.on(Laya.Event.RESIZE, this, this.onResize);
     }
 
-    onDisable(): void {
+    public onDisable(): void {
         // 注销事件（必须与 onEnable 配对）
         this.owner.off(Laya.Event.CLICK, this, this.onClick);
         Laya.stage.off(Laya.Event.RESIZE, this, this.onResize);
@@ -103,11 +103,11 @@ class DragScript extends Laya.Script {
     private _offsetX: number = 0;
     private _offsetY: number = 0;
 
-    onEnable(): void {
+    public onEnable(): void {
         this.owner.on(Laya.Event.MOUSE_DOWN, this, this.onDown);
     }
 
-    onDisable(): void {
+    public onDisable(): void {
         this.owner.off(Laya.Event.MOUSE_DOWN, this, this.onDown);
         Laya.stage.off(Laya.Event.MOUSE_MOVE, this, this.onMove);
         Laya.stage.off(Laya.Event.MOUSE_UP, this, this.onUp);

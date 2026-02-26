@@ -23,14 +23,14 @@ const { ccclass } = cc._decorator;
 
 @ccclass
 export default class TouchHandler extends cc.Component {
-    onEnable(): void {
+    protected onEnable(): void {
         this.node.on(cc.Node.EventType.TOUCH_START, this.onTouchStart, this);
         this.node.on(cc.Node.EventType.TOUCH_MOVE, this.onTouchMove, this);
         this.node.on(cc.Node.EventType.TOUCH_END, this.onTouchEnd, this);
         this.node.on(cc.Node.EventType.TOUCH_CANCEL, this.onTouchCancel, this);
     }
 
-    onDisable(): void {
+    protected onDisable(): void {
         this.node.off(cc.Node.EventType.TOUCH_START, this.onTouchStart, this);
         this.node.off(cc.Node.EventType.TOUCH_MOVE, this.onTouchMove, this);
         this.node.off(cc.Node.EventType.TOUCH_END, this.onTouchEnd, this);
@@ -111,12 +111,12 @@ export default class KeyboardHandler extends cc.Component {
     private moveDir: cc.Vec2 = cc.v2(0, 0);
     private pressedKeys: Set<number> = new Set();
 
-    onEnable(): void {
+    protected onEnable(): void {
         cc.systemEvent.on(cc.SystemEvent.EventType.KEY_DOWN, this.onKeyDown, this);
         cc.systemEvent.on(cc.SystemEvent.EventType.KEY_UP, this.onKeyUp, this);
     }
 
-    onDisable(): void {
+    protected onDisable(): void {
         cc.systemEvent.off(cc.SystemEvent.EventType.KEY_DOWN, this.onKeyDown, this);
         cc.systemEvent.off(cc.SystemEvent.EventType.KEY_UP, this.onKeyUp, this);
     }
@@ -149,7 +149,7 @@ export default class KeyboardHandler extends cc.Component {
         }
     }
 
-    update(dt: number): void {
+    protected update(dt: number): void {
         if (this.moveDir.x !== 0 || this.moveDir.y !== 0) {
             this.node.x += this.moveDir.x * this.moveSpeed * dt;
             this.node.y += this.moveDir.y * this.moveSpeed * dt;
@@ -258,7 +258,7 @@ export default class EventManager extends cc.Component {
         return EventManager._instance;
     }
 
-    onLoad(): void {
+    protected onLoad(): void {
         if (EventManager._instance) {
             this.node.destroy();
             return;
@@ -267,7 +267,7 @@ export default class EventManager extends cc.Component {
         cc.game.addPersistRootNode(this.node); // 跨场景保留
     }
 
-    onDestroy(): void {
+    protected onDestroy(): void {
         this._eventTarget.clear();
         EventManager._instance = null;
     }
@@ -298,14 +298,14 @@ import { GameEvent, eventBus } from "./EventBus";
 @ccclass
 export default class ScoreDisplay extends cc.Component {
     @property(cc.Label)
-    scoreLabel: cc.Label = null;
+    public scoreLabel: cc.Label = null;
 
-    onEnable(): void {
+    protected onEnable(): void {
         // ✅ 在 onEnable 中注册
         eventBus.on(GameEvent.SCORE_CHANGED, this.onScoreChanged, this);
     }
 
-    onDisable(): void {
+    protected onDisable(): void {
         // ✅ 在 onDisable 中注销
         eventBus.off(GameEvent.SCORE_CHANGED, this.onScoreChanged, this);
     }
@@ -331,24 +331,24 @@ export default class ProperEventHandling extends cc.Component {
     // 规则：在哪里注册，就在配对的生命周期中注销
 
     // 模式 1：onEnable / onDisable 配对（推荐）
-    onEnable(): void {
+    protected onEnable(): void {
         this.node.on(cc.Node.EventType.TOUCH_START, this.onTouch, this);
         cc.systemEvent.on(cc.SystemEvent.EventType.KEY_DOWN, this.onKey, this);
         eventBus.on("custom-event", this.onCustom, this);
     }
 
-    onDisable(): void {
+    protected onDisable(): void {
         this.node.off(cc.Node.EventType.TOUCH_START, this.onTouch, this);
         cc.systemEvent.off(cc.SystemEvent.EventType.KEY_DOWN, this.onKey, this);
         eventBus.off("custom-event", this.onCustom, this);
     }
 
     // 模式 2：onLoad / onDestroy 配对（一次性注册）
-    onLoad(): void {
+    protected onLoad(): void {
         this.node.on("size-changed", this.onSizeChanged, this);
     }
 
-    onDestroy(): void {
+    protected onDestroy(): void {
         this.node.off("size-changed", this.onSizeChanged, this);
         // 同时清理其他资源
         cc.Tween.stopAllByTarget(this.node);

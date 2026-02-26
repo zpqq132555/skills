@@ -92,21 +92,21 @@ class ObjectPool {
         }
     }
 
-    get(): Node {
+    public get(): Node {
         return this._pool.size() > 0
             ? this._pool.get()!
             : instantiate(this._prefab);
     }
 
-    put(node: Node) {
+    public put(node: Node) {
         this._pool.put(node);
     }
 
-    clear() {
+    public clear() {
         this._pool.clear();
     }
 
-    get size(): number {
+    public get size(): number {
         return this._pool.size();
     }
 }

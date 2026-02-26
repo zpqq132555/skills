@@ -33,11 +33,11 @@ export default class OptimizedMovement extends cc.Component {
     // 缓存的组件引用
     private rb: cc.RigidBody = null;
 
-    onLoad(): void {
+    protected onLoad(): void {
         this.rb = this.getComponent(cc.RigidBody);
     }
 
-    update(dt: number): void {
+    protected update(dt: number): void {
         // ✅ 早退（Early return）减少不必要的计算
         if (!this.isMoving) return;
 
@@ -107,7 +107,7 @@ export default class CachedExample extends cc.Component {
     private cachedWorldPos: cc.Vec2 = cc.v2();
     private worldPosDirty: boolean = true;
 
-    onLoad(): void {
+    protected onLoad(): void {
         // ✅ 一次性获取所有需要的组件
         this.sprite = this.getComponent(cc.Sprite);
         this.label = this.getComponent(cc.Label);
@@ -293,7 +293,7 @@ public buildLeaderboard(players: { name: string; score: number }[]): string {
 @ccclass
 export default class TimerExample extends cc.Component {
     // ✅ 优秀：使用 schedule 系统
-    onLoad(): void {
+    protected onLoad(): void {
         // 延迟调用（单次）
         this.scheduleOnce(this.delayedInit, 0.5);
 
@@ -304,7 +304,7 @@ export default class TimerExample extends cc.Component {
         this.schedule(this.spawnWave, 0.2, 5, 1.0);
     }
 
-    onDestroy(): void {
+    protected onDestroy(): void {
         // ✅ 必须清理定时器
         this.unschedule(this.checkEnemySpawn);
         this.unscheduleAllCallbacks();
@@ -345,7 +345,7 @@ export default class BulletManager extends cc.Component {
     private bulletPool: cc.NodePool = new cc.NodePool("BulletController");
 
     // 预创建对象
-    onLoad(): void {
+    protected onLoad(): void {
         this.prewarm(20);
     }
 
@@ -375,7 +375,7 @@ export default class BulletManager extends cc.Component {
     }
 
     // 清理池
-    onDestroy(): void {
+    protected onDestroy(): void {
         this.bulletPool.clear();
     }
 }
@@ -387,7 +387,7 @@ export default class BulletController extends cc.Component {
     private direction: cc.Vec2 = cc.v2(0, 1);
 
     // cc.NodePool.get() 时调用
-    reuse(): void {
+    public reuse(): void {
         this.node.active = true;
         this.node.opacity = 255;
         this.direction.x = 0;
@@ -395,13 +395,13 @@ export default class BulletController extends cc.Component {
     }
 
     // cc.NodePool.put() 时调用
-    unuse(): void {
+    public unuse(): void {
         this.node.active = false;
         this.node.stopAllActions();
         this.unscheduleAllCallbacks();
     }
 
-    update(dt: number): void {
+    protected update(dt: number): void {
         this.node.x += this.direction.x * this.speed * dt;
         this.node.y += this.direction.y * this.speed * dt;
 

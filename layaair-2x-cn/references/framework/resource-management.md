@@ -24,7 +24,7 @@
 
 ```typescript
 class LoadingScene extends Laya.Scene {
-    onStart(): void {
+    public onStart(): void {
         const assets = [
             { url: "res/atlas/game.atlas",  type: Laya.Loader.ATLAS },
             { url: "res/atlas/ui.atlas",    type: Laya.Loader.ATLAS },
@@ -116,7 +116,7 @@ Laya.loader.clearTextureRes("res/img/hero.png");
 // 按场景释放（最佳实践）
 class GameScene extends Laya.Scene {
     // 场景关闭时释放相关资源
-    close(): void {
+    public close(): void {
         // 释放该场景独有的资源
         const sceneAssets = [
             "res/atlas/game.atlas",

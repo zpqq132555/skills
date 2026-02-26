@@ -20,23 +20,23 @@ class HeroScript extends Laya.Script {
     /** @prop {name: speed, tips: "移动速度", type: number, default: 300} */
     public speed: number = 300;
 
-    onAwake(): void {
+    public onAwake(): void {
         // 仅做初始化，不依赖其他节点
     }
 
-    onStart(): void {
+    public onStart(): void {
         // 获取其他组件/节点，注册回调
     }
 
-    onUpdate(): void {
+    public onUpdate(): void {
         // 只放高频逻辑，避免对象创建
     }
 
-    onDisable(): void {
+    public onDisable(): void {
         Laya.timer.clearAll(this);
     }
 
-    onDestroy(): void {
+    public onDestroy(): void {
         Laya.timer.clearAll(this);
         Laya.Tween.clearAll(this.owner);
         if (this._onDead) {
@@ -117,7 +117,7 @@ h2.recover();
 class HeroScript extends Laya.Script {
     private _hpBar: Laya.Sprite | null = null;
 
-    onStart(): void {
+    public onStart(): void {
         this._hpBar = this.owner.getChildByName("HpBar") as Laya.Sprite;
         if (!this._hpBar) {
             console.error("HeroScript: HpBar 节点未找到！");
@@ -125,7 +125,7 @@ class HeroScript extends Laya.Script {
     }
 
     // ❌ 不要在 onUpdate 中每帧查找节点
-    onUpdate(): void {
+    public onUpdate(): void {
         // ❌ this.owner.getChildByName("HpBar")  每帧搜索
         // ✅ this._hpBar  使用已缓存的引用
     }

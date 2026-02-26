@@ -72,35 +72,35 @@ class PlayerScript extends Laya.Script {
 
     private _owner: Laya.Sprite;
 
-    onAwake(): void {
+    public onAwake(): void {
         // 组件激活，owner 已就绪（等同 Awake）
         this._owner = this.owner as Laya.Sprite;
     }
 
-    onStart(): void {
+    public onStart(): void {
         // 第一帧 Update 执行前（等同 Start）
     }
 
-    onEnable(): void {
+    public onEnable(): void {
         // 组件启用时（注册事件在此）
         Laya.stage.on(Laya.Event.CLICK, this, this.onClick);
     }
 
-    onUpdate(): void {
+    public onUpdate(): void {
         // 每帧调用（等同 Update）
         this.owner.x += this.speed;
     }
 
-    onLateUpdate(): void {
+    public onLateUpdate(): void {
         // 每帧 onUpdate 之后（等同 LateUpdate）
     }
 
-    onDisable(): void {
+    public onDisable(): void {
         // 组件禁用时（注销事件在此）
         Laya.stage.off(Laya.Event.CLICK, this, this.onClick);
     }
 
-    onDestroy(): void {
+    public onDestroy(): void {
         // 组件销毁时（清理资源）
     }
 

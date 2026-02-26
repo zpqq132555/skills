@@ -54,11 +54,11 @@ export default class HealthBar extends cc.Component {
     @property(cc.Node)
     private targetNode: cc.Node = null;
 
-    onEnable(): void {
+    protected onEnable(): void {
         this.targetNode.on("health-changed", this.onHealthChanged, this);
     }
 
-    onDisable(): void {
+    protected onDisable(): void {
         this.targetNode.off("health-changed", this.onHealthChanged, this);
     }
 
@@ -191,7 +191,7 @@ export default class WellManagedComponent extends cc.Component {
     private audioId: number = -1;
     private tweenAction: cc.Tween<cc.Node> = null;
 
-    onLoad(): void {
+    protected onLoad(): void {
         // ✅ 1. 获取组件引用
         // ✅ 2. 加载动态资源
         cc.resources.load("prefabs/Effect", cc.Prefab, (err, prefab) => {
@@ -204,17 +204,17 @@ export default class WellManagedComponent extends cc.Component {
         });
     }
 
-    onEnable(): void {
+    protected onEnable(): void {
         // ✅ 3. 注册事件
         this.node.on(cc.Node.EventType.TOUCH_START, this.onTouch, this);
     }
 
-    onDisable(): void {
+    protected onDisable(): void {
         // ✅ 4. 注销事件
         this.node.off(cc.Node.EventType.TOUCH_START, this.onTouch, this);
     }
 
-    onDestroy(): void {
+    protected onDestroy(): void {
         // ✅ 5. 释放动态加载的资源
         if (this.loadedPrefab) {
             this.loadedPrefab.decRef();
@@ -268,7 +268,7 @@ export default class PlayableEntry extends cc.Component {
     private gameTimer: number = 0;
     private readonly GAME_DURATION: number = 20;
 
-    onLoad(): void {
+    protected onLoad(): void {
         // ✅ 全局触摸拦截（兜底安装跳转）
         this.node.on(cc.Node.EventType.TOUCH_START, this.onGlobalTouch, this);
 
@@ -276,7 +276,7 @@ export default class PlayableEntry extends cc.Component {
         this.ctaButton.on(cc.Node.EventType.TOUCH_START, this.onInstall, this);
     }
 
-    update(dt: number): void {
+    protected update(dt: number): void {
         this.gameTimer += dt;
         if (this.gameTimer >= this.GAME_DURATION) {
             this.showEndCard();
@@ -302,7 +302,7 @@ export default class PlayableEntry extends cc.Component {
         // 可选：特定阶段点击也触发安装
     }
 
-    onDestroy(): void {
+    protected onDestroy(): void {
         this.node.off(cc.Node.EventType.TOUCH_START, this.onGlobalTouch, this);
         this.ctaButton.off(cc.Node.EventType.TOUCH_START, this.onInstall, this);
     }

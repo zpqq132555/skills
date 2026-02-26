@@ -28,7 +28,7 @@ Laya.Tween.from(sprite, { x: 0, y: -100 }, 600, Laya.Ease.backOut);
 
 ```typescript
 class UIAnimScript extends Laya.Script {
-    onEnable(): void {
+    public onEnable(): void {
         // 从初始状态淡入
         this.owner.alpha = 0;
         Laya.Tween.to(this.owner, { alpha: 1 }, 300);
@@ -45,7 +45,7 @@ class UIAnimScript extends Laya.Script {
             Laya.Ease.backIn, Laya.Handler.create(this, onClosed));
     }
 
-    onDisable(): void {
+    public onDisable(): void {
         // 停止对象上所有缓动（必须！）
         Laya.Tween.clearAll(this.owner);
     }
@@ -132,7 +132,7 @@ Laya.timer.clearAll(this);
 class CountdownScript extends Laya.Script {
     private _timeLeft: number = 60;
 
-    onEnable(): void {
+    public onEnable(): void {
         this._timeLeft = 60;
         Laya.timer.loop(1000, this, this.onTick);
     }
@@ -145,11 +145,11 @@ class CountdownScript extends Laya.Script {
         }
     }
 
-    onDisable(): void {
+    public onDisable(): void {
         Laya.timer.clear(this, this.onTick);
     }
 
-    onDestroy(): void {
+    public onDestroy(): void {
         Laya.timer.clearAll(this);
     }
 }
@@ -240,17 +240,17 @@ class AnimatedScript extends Laya.Script {
     private _sk: Laya.Skeleton | null = null;
     private _anim: Laya.Animation | null = null;
 
-    onStart(): void {
+    public onStart(): void {
         // 初始化动画...
     }
 
-    onDisable(): void {
+    public onDisable(): void {
         // 暂停缓动
         Laya.Tween.clearAll(this.owner);
         Laya.timer.clearAll(this);
     }
 
-    onDestroy(): void {
+    public onDestroy(): void {
         // 清理所有动画资源
         Laya.Tween.clearAll(this.owner);
         Laya.timer.clearAll(this);

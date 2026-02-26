@@ -63,11 +63,11 @@ const { ccclass, property } = cc._decorator;
 @ccclass
 export default class BulletManager extends cc.Component {
     @property(cc.Prefab)
-    bulletPrefab: cc.Prefab = null;
+    public bulletPrefab: cc.Prefab = null;
 
     private bulletPool: cc.NodePool = new cc.NodePool("BulletComponent");
 
-    onLoad(): void {
+    protected onLoad(): void {
         // 预创建对象池
         this.initPool(20);
     }
@@ -108,7 +108,7 @@ export default class BulletManager extends cc.Component {
         this.bulletPool.put(bullet);
     }
 
-    onDestroy(): void {
+    protected onDestroy(): void {
         this.bulletPool.clear();
     }
 }
@@ -126,7 +126,7 @@ export default class BulletComponent extends cc.Component {
      * 对象池取出时调用（替代 onLoad/start）
      * 用于重置状态
      */
-    reuse(): void {
+    public reuse(): void {
         this.speed = 500;
         this.direction = cc.v2(0, 1);
         this.node.opacity = 255;
@@ -136,13 +136,13 @@ export default class BulletComponent extends cc.Component {
      * 对象池回收时调用（替代 onDestroy）
      * 用于清理状态
      */
-    unuse(): void {
+    public unuse(): void {
         this.node.stopAllActions();
         cc.Tween.stopAllByTarget(this.node);
         this.unscheduleAllCallbacks();
     }
 
-    update(dt: number): void {
+    protected update(dt: number): void {
         this.node.x += this.direction.x * this.speed * dt;
         this.node.y += this.direction.y * this.speed * dt;
 
@@ -214,7 +214,7 @@ export default class OptimizedUpdate extends cc.Component {
     private readonly tempColor: cc.Color = cc.color();
     private frameCount: number = 0;
 
-    update(dt: number): void {
+    protected update(dt: number): void {
         // ✅ 复用预分配的向量
         this.tempVec2.x = this.node.x + 10 * dt;
         this.tempVec2.y = this.node.y;
@@ -323,14 +323,14 @@ Web 平台特殊设置：
 ```typescript
 @ccclass
 export default class PerfMonitor extends cc.Component {
-    start(): void {
+    protected start(): void {
         if (CC_DEBUG) {
             cc.debug.setDisplayStats(true);
         }
     }
 
     // 在需要时输出性能信息
-    logPerformance(): void {
+    public logPerformance(): void {
         if (CC_DEBUG) {
             cc.log("DrawCall:", cc.renderer.drawCalls);
             cc.log("节点数:", cc.director.getTotalFrames());

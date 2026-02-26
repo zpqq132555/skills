@@ -57,10 +57,10 @@ if (CC_DEBUG) { }                  // 2.x 宏
 @ccclass('PlayerController')
 export class PlayerController extends Component {
     @property(Node)
-    target: Node | null = null;
+    private readonly target: Node | null = null;
     
     @property
-    speed = 10;
+    private readonly speed = 10;
 }
 
 // ❌ cc 类名与类名不一致

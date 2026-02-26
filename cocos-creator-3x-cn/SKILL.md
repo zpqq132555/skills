@@ -43,16 +43,16 @@ const { ccclass, property } = _decorator;
 @ccclass('MyComponent')
 export class MyComponent extends Component {
     @property(Node)
-    targetNode: Node | null = null;
+    private readonly targetNode: Node | null = null;
 
     @property
-    speed: number = 10;
+    private readonly speed: number = 10;
 
     // 生命周期见 §2
-    onLoad() { }
-    start() { }
-    update(dt: number) { }
-    onDestroy() { }
+    protected onLoad() { }
+    protected start() { }
+    protected update(dt: number) { }
+    protected onDestroy() { }
 }
 ```
 
@@ -159,19 +159,19 @@ import { _decorator, Component, input, Input, EventTouch, EventKeyboard, KeyCode
 
 @ccclass('InputExample')
 export class InputExample extends Component {
-    onEnable() {
+    protected onEnable() {
         input.on(Input.EventType.TOUCH_START, this.onTouchStart, this);
         input.on(Input.EventType.KEY_DOWN, this.onKeyDown, this);
     }
-    onDisable() {
+    protected onDisable() {
         input.off(Input.EventType.TOUCH_START, this.onTouchStart, this);
         input.off(Input.EventType.KEY_DOWN, this.onKeyDown, this);
     }
-    onTouchStart(event: EventTouch) {
+    private onTouchStart(event: EventTouch) {
         console.log(event.getLocation());     // 屏幕坐标
         console.log(event.getUILocation());   // UI 坐标
     }
-    onKeyDown(event: EventKeyboard) {
+    private onKeyDown(event: EventKeyboard) {
         if (event.keyCode === KeyCode.SPACE) { /* ... */ }
     }
 }
@@ -209,7 +209,7 @@ onTouchStart(event: EventTouch) {
 import { Event } from 'cc';
 
 class MyEvent extends Event {
-    detail: any;
+    public detail: any;
     constructor(name: string, bubbles?: boolean, detail?: any) {
         super(name, bubbles);
         this.detail = detail;

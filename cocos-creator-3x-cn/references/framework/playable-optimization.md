@@ -103,7 +103,7 @@ class BulletPool {
     private _pool = new NodePool('Bullet');
     private _prefab: Prefab | null = null;
 
-    init(prefab: Prefab) {
+    public init(prefab: Prefab) {
         this._prefab = prefab;
         // 预热
         for (let i = 0; i < 10; i++) {
@@ -112,18 +112,18 @@ class BulletPool {
         }
     }
 
-    get(): Node {
+    public get(): Node {
         if (this._pool.size() > 0) {
             return this._pool.get()!;
         }
         return instantiate(this._prefab!);
     }
 
-    put(node: Node) {
+    public put(node: Node) {
         this._pool.put(node);
     }
 
-    clear() {
+    public clear() {
         this._pool.clear();
     }
 }
@@ -193,7 +193,7 @@ function canCollide(a: number, b: number): boolean {
 // 2. 使用加载界面遮罩异步加载
 @ccclass('LoadingScreen')
 export class LoadingScreen extends Component {
-    start() {
+    protected start() {
         const tasks = [
             this.loadPrefabs(),
             this.loadAudio(),
