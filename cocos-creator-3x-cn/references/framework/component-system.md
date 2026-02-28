@@ -199,7 +199,7 @@ export class LifecycleDemo extends Component {
      * - 可安全获取其他组件引用
      * - 不要在此处理依赖其他组件 onLoad 完成的逻辑
      */
-    protected onLoad() {
+    protected onLoad(): void {
         this._pool = new NodePool('Bullet');
     }
 
@@ -208,7 +208,7 @@ export class LifecycleDemo extends Component {
      * - 与 onDisable 配对
      * - 可能被多次调用
      */
-    protected onEnable() {
+    protected onEnable(): void {
         input.on(Input.EventType.TOUCH_START, this.onTouch, this);
         this.node.on(Node.EventType.TOUCH_START, this.onNodeTouch, this);
     }
@@ -218,7 +218,7 @@ export class LifecycleDemo extends Component {
      * - 可确保同场景所有组件的 onLoad 已完成
      * - 只调用一次
      */
-    protected start() {
+    protected start(): void {
         const otherComp = find('Canvas/Manager')?.getComponent(GameManager);
         // 安全使用 otherComp
     }
@@ -227,7 +227,7 @@ export class LifecycleDemo extends Component {
      * update: 每帧逻辑
      * - dt 为上一帧耗时（秒）
      */
-    protected update(dt: number) {
+    protected update(dt: number): void {
         this.node.angle += this.rotateSpeed * dt;
     }
 
@@ -236,7 +236,7 @@ export class LifecycleDemo extends Component {
      * - 在所有 update 之后
      * - 适合相机跟随、最终位置调整
      */
-    protected lateUpdate(dt: number) {
+    protected lateUpdate(dt: number): void {
         // 相机跟随逻辑
     }
 
@@ -244,7 +244,7 @@ export class LifecycleDemo extends Component {
      * onDisable: 注销事件监听
      * - 与 onEnable 配对
      */
-    protected onDisable() {
+    protected onDisable(): void {
         input.off(Input.EventType.TOUCH_START, this.onTouch, this);
         this.node.off(Node.EventType.TOUCH_START, this.onNodeTouch, this);
     }
@@ -254,7 +254,7 @@ export class LifecycleDemo extends Component {
      * - 释放动态加载的资源
      * - 清理对象池
      */
-    protected onDestroy() {
+    protected onDestroy(): void {
         this._pool?.clear();
         this._pool = null;
     }

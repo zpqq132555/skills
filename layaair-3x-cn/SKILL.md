@@ -78,7 +78,7 @@ const { regClass, property } = Laya;
 
 @regClass()
 export class Main extends Laya.Script {
-    onStart() {
+    public onStart(): void {
         console.log("Game start");
     }
 }
@@ -107,50 +107,50 @@ export class PlayerScript extends Laya.Script {
     @property({ type: Laya.Prefab })
     public bulletPrefab: Laya.Prefab;
 
-    onAwake(): void {
+    public onAwake(): void {
         // 组件首次激活，只执行一次
     }
 
-    onEnable(): void {
+    public onEnable(): void {
         // 每次添加到舞台（含对象池取出），注册事件
     }
 
-    onStart(): void {
+    public onStart(): void {
         // 第一次 onUpdate 之前，只执行一次
     }
 
-    onUpdate(): void {
+    public onUpdate(): void {
         // 每帧调用
     }
 
-    onLateUpdate(): void {
+    public onLateUpdate(): void {
         // 每帧 onUpdate 之后
     }
 
-    onDisable(): void {
+    public onDisable(): void {
         // 从舞台移除，注销事件
     }
 
-    onDestroy(): void {
+    public onDestroy(): void {
         // 节点销毁
     }
 
     // 脚本内置鼠标事件
-    onMouseClick(evt: Laya.Event): void { }
-    onMouseDown(evt: Laya.Event): void { }
-    onMouseUp(evt: Laya.Event): void { }
+    public onMouseClick(evt: Laya.Event): void { }
+    public onMouseDown(evt: Laya.Event): void { }
+    public onMouseUp(evt: Laya.Event): void { }
 
     // 脚本内置键盘事件
-    onKeyDown(evt: Laya.Event): void { }
-    onKeyUp(evt: Laya.Event): void { }
+    public onKeyDown(evt: Laya.Event): void { }
+    public onKeyUp(evt: Laya.Event): void { }
 
     // 脚本内置物理事件
-    onTriggerEnter(other: any, self?: any, contact?: any): void { }
-    onTriggerStay(other: any, self?: any, contact?: any): void { }
-    onTriggerExit(other: any, self?: any, contact?: any): void { }
-    onCollisionEnter(other: any, self?: any, contact?: any): void { }
-    onCollisionStay(other: any, self?: any, contact?: any): void { }
-    onCollisionExit(other: any, self?: any, contact?: any): void { }
+    public onTriggerEnter(other: any, self?: any, contact?: any): void { }
+    public onTriggerStay(other: any, self?: any, contact?: any): void { }
+    public onTriggerExit(other: any, self?: any, contact?: any): void { }
+    public onCollisionEnter(other: any, self?: any, contact?: any): void { }
+    public onCollisionStay(other: any, self?: any, contact?: any): void { }
+    public onCollisionExit(other: any, self?: any, contact?: any): void { }
 }
 ```
 
@@ -205,7 +205,7 @@ Laya.loader.clearRes("res.png");
 Laya.Scene.open("path/Scene.ls", false, { score: 100 });
 
 // 接收参数
-onOpened(param: any): void {
+public onOpened(param: any): void {
     console.log(param.score);
 }
 

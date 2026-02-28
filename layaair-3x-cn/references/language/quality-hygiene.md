@@ -87,17 +87,17 @@ export class PlayerScript extends Laya.Script {
 ```typescript
 @regClass()
 export class SafeScript extends Laya.Script {
-    onEnable(): void {
+    public onEnable(): void {
         this.owner.on(Laya.Event.CLICK, this, this.onClick);
         Laya.stage.on("gameEvent", this, this.onGameEvent);
     }
 
-    onDisable(): void {
+    public onDisable(): void {
         this.owner.off(Laya.Event.CLICK, this, this.onClick);
         Laya.stage.off("gameEvent", this, this.onGameEvent);
     }
 
-    onDestroy(): void {
+    public onDestroy(): void {
         // 兜底清理
         Laya.stage.offAllCaller(this);
         Laya.timer.clearAll(this);
@@ -111,7 +111,7 @@ export class SafeScript extends Laya.Script {
 
 ```typescript
 // ✅ 资源加载异常处理
-async onStart(): Promise<void> {
+public async onStart(): Promise<void> {
     try {
         const res = await Laya.loader.load("resources/config.json");
         if (!res) {
@@ -125,7 +125,7 @@ async onStart(): Promise<void> {
 }
 
 // ✅ 空引用保护
-onUpdate(): void {
+public onUpdate(): void {
     if (!this.target || !this.target.activeInHierarchy) return;
     // 安全使用 target
 }
@@ -151,7 +151,7 @@ onUpdate(): void {
 
 ```typescript
 // ❌ 生产代码中不要留 console.log
-onUpdate(): void {
+public onUpdate(): void {
     console.log(this.owner.x); // ❌ 每帧打印，严重影响性能
 }
 

@@ -13,13 +13,13 @@ const { regClass, property } = Laya;
 
 @regClass()
 export class PlayerScript extends Laya.Script {
-    onEnable(): void {
+    public onEnable(): void {
         // ✅ 注册事件（与 onDisable 配对）
         this.owner.on(Laya.Event.CLICK, this, this.onClick);
         Laya.stage.on(Laya.Event.RESIZE, this, this.onResize);
     }
 
-    onDisable(): void {
+    public onDisable(): void {
         // ✅ 注销事件（必须与 onEnable 配对）
         this.owner.off(Laya.Event.CLICK, this, this.onClick);
         Laya.stage.off(Laya.Event.RESIZE, this, this.onResize);
@@ -130,13 +130,13 @@ Laya.stage.on(Laya.Event.TOUCH_BEGIN, this, (evt: Laya.Event) => {
 // 方式一：直接使用 event + on
 @regClass()
 export class ClickHandler extends Laya.Script {
-    onAwake(): void {
+    public onAwake(): void {
         this.owner.on("gameOver", this, (score: number) => {
             console.log("Game Over! Score:", score);
         });
     }
 
-    onMouseClick(evt: Laya.Event): void {
+    public onMouseClick(evt: Laya.Event): void {
         this.owner.event("gameOver", 100);
     }
 }
@@ -180,11 +180,11 @@ LayaAir 3.x Script 提供内置事件方法，无需手动调用 `on/off`：
 @regClass()
 export class GameScript extends Laya.Script {
     // ✅ 内置方法：自动绑定到 owner 节点
-    onMouseClick(evt: Laya.Event): void {
+    public onMouseClick(evt: Laya.Event): void {
         console.log("被点击了");
     }
 
-    onKeyDown(evt: Laya.Event): void {
+    public onKeyDown(evt: Laya.Event): void {
         if (evt.keyCode === Laya.Keyboard.SPACE) {
             this.jump();
         }
@@ -204,15 +204,15 @@ export class GameScript extends Laya.Script {
 ### ✅ 推荐做法
 ```typescript
 // 1. on/off 配对，在 onEnable/onDisable 中做
-onEnable(): void {
+public onEnable(): void {
     Laya.stage.on("scoreChanged", this, this.onScoreChanged);
 }
-onDisable(): void {
+public onDisable(): void {
     Laya.stage.off("scoreChanged", this, this.onScoreChanged);
 }
 
-// 2. 销毁时使用 offAllCaller 兜底
-onDestroy(): void {
+// 2. 销毁时使用 offAllCaller 兆底
+public onDestroy(): void {
     Laya.stage.offAllCaller(this);
 }
 
@@ -223,18 +223,18 @@ node.once(Laya.Event.COMPLETE, this, () => { });
 ### ❌ 常见错误
 ```typescript
 // 1. 忘记注销事件 → 内存泄漏
-onEnable(): void {
+public onEnable(): void {
     node.on(Laya.Event.CLICK, this, this.onClick);
 }
 // 缺少 onDisable 中的 off!
 
 // 2. 在 onUpdate 中注册事件 → 重复注册
-onUpdate(): void {
+public onUpdate(): void {
     this.owner.on(Laya.Event.CLICK, this, this.onClick); // ❌ 每帧注册一次！
 }
 
 // 3. 箭头函数无法正确 off
-onEnable(): void {
+public onEnable(): void {
     node.on("evt", this, () => { }); // ❌ 匿名函数无法注销
 }
 ```

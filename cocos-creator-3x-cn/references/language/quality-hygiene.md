@@ -93,7 +93,7 @@ const sprite = this.node.getComponent(Sprite)?.spriteFrame;
 const speed = this.config?.speed ?? 10;
 
 // ✅ 提前返回
-onTouchStart(event: EventTouch) {
+private onTouchStart(event: EventTouch): void {
     if (!this.targetNode) return;
     // 安全使用 this.targetNode
 }
@@ -139,13 +139,13 @@ const enum Direction {
 
 ```typescript
 // ✅ 正确：onEnable / onDisable 严格配对
-onEnable() {
+protected onEnable(): void {
     input.on(Input.EventType.TOUCH_START, this.onTouchStart, this);
     input.on(Input.EventType.KEY_DOWN, this.onKeyDown, this);
     this.node.on(Node.EventType.TOUCH_START, this.onNodeTouch, this);
 }
 
-onDisable() {
+protected onDisable(): void {
     input.off(Input.EventType.TOUCH_START, this.onTouchStart, this);
     input.off(Input.EventType.KEY_DOWN, this.onKeyDown, this);
     this.node.off(Node.EventType.TOUCH_START, this.onNodeTouch, this);
@@ -159,7 +159,7 @@ onDisable() {
 export class ResourceHolder extends Component {
     private _loadedAssets: Asset[] = [];
 
-    public loadAsset(path: string, type: typeof Asset) {
+    public loadAsset(path: string, type: typeof Asset): void {
         resources.load(path, type, (err, asset) => {
             if (err) return;
             asset.addRef();
@@ -167,7 +167,7 @@ export class ResourceHolder extends Component {
         });
     }
 
-    protected onDestroy() {
+    protected onDestroy(): void {
         // 释放所有持有的资源
         for (const asset of this._loadedAssets) {
             asset.decRef();
@@ -180,7 +180,7 @@ export class ResourceHolder extends Component {
 ### 4.3 定时器清理
 
 ```typescript
-onDestroy() {
+protected onDestroy(): void {
     this.unscheduleAllCallbacks();
     Tween.stopAllByTarget(this.node);
 }
@@ -248,20 +248,20 @@ export class PlayerHealth extends Component {
 export class Example extends Component {
     // public: 编辑器属性 + 外部 API
     @property
-    private readonly speed = 10;
+    public readonly speed: number = 10;
     
     // protected: 子类可访问
-    protected _state = GameState.Idle;
+    protected _state: GameState = GameState.Idle;
     
     // private: 仅内部使用
-    private _timer = 0;
+    private _timer: number = 0;
     private _cache: Map<string, any> = new Map();
 
     // public 方法：对外接口
-    public startGame() { /* ... */ }
+    public startGame(): void { /* ... */ }
     
     // private 方法：内部实现
-    private calculateScore() { /* ... */ }
+    private calculateScore(): number { /* ... */ return 0; }
 }
 ```
 
@@ -294,13 +294,13 @@ if (DEBUG) {
 
 // ✅ 封装日志工具
 class Logger {
-    public static log(msg: string, ...args: any[]) {
+    public static log(msg: string, ...args: any[]): void {
         if (DEBUG) console.log(`[Game] ${msg}`, ...args);
     }
-    public static warn(msg: string, ...args: any[]) {
+    public static warn(msg: string, ...args: any[]): void {
         if (DEBUG) console.warn(`[Game] ${msg}`, ...args);
     }
-    public static error(msg: string, ...args: any[]) {
+    public static error(msg: string, ...args: any[]): void {
         console.error(`[Game] ${msg}`, ...args); // 错误始终输出
     }
 }

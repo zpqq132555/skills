@@ -190,30 +190,30 @@ export class EnemyScript extends Laya.Script {
 
     private _isAlive: boolean = true;
 
-    onAwake(): void {
+    public onAwake(): void {
         // 初始化，只执行一次
     }
 
-    onEnable(): void {
+    public onEnable(): void {
         // 注册事件（每次添加到舞台）
         this.owner.on(Laya.Event.CLICK, this, this.onClicked);
     }
 
-    onStart(): void {
+    public onStart(): void {
         this._isAlive = true;
     }
 
-    onUpdate(): void {
+    public onUpdate(): void {
         if (!this._isAlive) return;
         // 更新逻辑
     }
 
-    onDisable(): void {
+    public onDisable(): void {
         // 注销事件（每次从舞台移除）
         this.owner.off(Laya.Event.CLICK, this, this.onClicked);
     }
 
-    onDestroy(): void {
+    public onDestroy(): void {
         this.targetNode = null;
         Laya.timer.clearAll(this);
     }
@@ -236,31 +236,31 @@ LayaAir 3.x 的 Script 内置了鼠标、键盘、物理事件方法，无需手
 
 ### 鼠标事件
 ```typescript
-onMouseDown(evt: Laya.Event): void { }
-onMouseUp(evt: Laya.Event): void { }
-onMouseClick(evt: Laya.Event): void { }
-onMouseMove(evt: Laya.Event): void { }
-onMouseOver(evt: Laya.Event): void { }
-onMouseOut(evt: Laya.Event): void { }
-onMouseDrag(evt: Laya.Event): void { }
-onMouseDragEnd(evt: Laya.Event): void { }
+public onMouseDown(evt: Laya.Event): void { }
+public onMouseUp(evt: Laya.Event): void { }
+public onMouseClick(evt: Laya.Event): void { }
+public onMouseMove(evt: Laya.Event): void { }
+public onMouseOver(evt: Laya.Event): void { }
+public onMouseOut(evt: Laya.Event): void { }
+public onMouseDrag(evt: Laya.Event): void { }
+public onMouseDragEnd(evt: Laya.Event): void { }
 ```
 
 ### 键盘事件
 ```typescript
-onKeyDown(evt: Laya.Event): void { }
-onKeyPress(evt: Laya.Event): void { }
-onKeyUp(evt: Laya.Event): void { }
+public onKeyDown(evt: Laya.Event): void { }
+public onKeyPress(evt: Laya.Event): void { }
+public onKeyUp(evt: Laya.Event): void { }
 ```
 
 ### 物理碰撞事件（2D/3D 通用）
 ```typescript
-onTriggerEnter(other: any, self?: any, contact?: any): void { }
-onTriggerStay(other: any, self?: any, contact?: any): void { }
-onTriggerExit(other: any, self?: any, contact?: any): void { }
-onCollisionEnter(other: any, self?: any, contact?: any): void { }
-onCollisionStay(other: any, self?: any, contact?: any): void { }
-onCollisionExit(other: any, self?: any, contact?: any): void { }
+public onTriggerEnter(other: any, self?: any, contact?: any): void { }
+public onTriggerStay(other: any, self?: any, contact?: any): void { }
+public onTriggerExit(other: any, self?: any, contact?: any): void { }
+public onCollisionEnter(other: any, self?: any, contact?: any): void { }
+public onCollisionStay(other: any, self?: any, contact?: any): void { }
+public onCollisionExit(other: any, self?: any, contact?: any): void { }
 ```
 
 ---

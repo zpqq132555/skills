@@ -35,7 +35,7 @@ input.off(Input.EventType.KEY_DOWN, this.onKeyDown, this);
 ### 2.2 触摸事件
 
 ```typescript
-onTouchStart(event: EventTouch) {
+private onTouchStart(event: EventTouch): void {
     const screenPos = event.getLocation();       // Vec2 屏幕坐标
     const uiPos = event.getUILocation();         // Vec2 UI 坐标
     const delta = event.getDelta();              // Vec2 位移
@@ -53,7 +53,7 @@ onTouchStart(event: EventTouch) {
 ### 2.3 键盘事件
 
 ```typescript
-onKeyDown(event: EventKeyboard) {
+private onKeyDown(event: EventKeyboard): void {
     switch (event.keyCode) {
         case KeyCode.KEY_W:
         case KeyCode.ARROW_UP:
@@ -79,7 +79,7 @@ onKeyDown(event: EventKeyboard) {
 ```typescript
 import { EventMouse } from 'cc';
 
-onMouseWheel(event: EventMouse) {
+private onMouseWheel(event: EventMouse): void {
     const scrollY = event.getScrollY();
     // 缩放逻辑
 }
@@ -90,12 +90,12 @@ onMouseWheel(event: EventMouse) {
 ### 2.5 重力传感
 
 ```typescript
-onLoad() {
+protected onLoad(): void {
     input.setAccelerometerEnabled(true);
     input.on(Input.EventType.DEVICEMOTION, this.onDeviceMotion, this);
 }
 
-onDeviceMotion(event: EventAcceleration) {
+private onDeviceMotion(event: EventAcceleration): void {
     console.log(event.acc.x, event.acc.y, event.acc.z);
 }
 ```
@@ -113,21 +113,21 @@ import { _decorator, Component, Node, EventTouch } from 'cc';
 
 @ccclass('NodeEventDemo')
 export class NodeEventDemo extends Component {
-    protected onEnable() {
+    protected onEnable(): void {
         this.node.on(Node.EventType.TOUCH_START, this.onTouchStart, this);
         this.node.on(Node.EventType.TOUCH_MOVE, this.onTouchMove, this);
         this.node.on(Node.EventType.TOUCH_END, this.onTouchEnd, this);
         this.node.on(Node.EventType.TOUCH_CANCEL, this.onTouchCancel, this);
     }
 
-    protected onDisable() {
+    protected onDisable(): void {
         this.node.off(Node.EventType.TOUCH_START, this.onTouchStart, this);
         this.node.off(Node.EventType.TOUCH_MOVE, this.onTouchMove, this);
         this.node.off(Node.EventType.TOUCH_END, this.onTouchEnd, this);
         this.node.off(Node.EventType.TOUCH_CANCEL, this.onTouchCancel, this);
     }
 
-    private onTouchStart(event: EventTouch) {
+    private onTouchStart(event: EventTouch): void {
         // event.getUILocation() — UI 坐标
         // event.propagationStopped = true — 阻止冒泡
     }
@@ -152,12 +152,12 @@ this.node.on(Node.EventType.TOUCH_START, callback, this);
 this.node.on(Node.EventType.TOUCH_START, callback, this, true);
 
 // 阻止冒泡
-onTouchStart(event: EventTouch) {
+private onTouchStart(event: EventTouch): void {
     event.propagationStopped = true;
 }
 
 // 立即停止（连同一节点上的其他监听器也不触发）
-onTouchStart(event: EventTouch) {
+private onTouchStart2(event: EventTouch): void {
     event.propagationImmediateStopped = true;
 }
 ```
@@ -167,7 +167,7 @@ onTouchStart(event: EventTouch) {
 ```typescript
 // 默认情况下，同级节点中顶层节点会吞噬事件
 // 使用 preventSwallow 允许事件穿透到下层同级节点
-onTouchStart(event: EventTouch) {
+private onTouchStart(event: EventTouch): void {
     event.preventSwallow = true;
 }
 ```
@@ -267,15 +267,15 @@ interface GameEventMap {
 class TypedEventTarget {
     private _et = new EventTarget();
 
-    public on<K extends keyof GameEventMap>(type: K, callback: GameEventMap[K], target?: any) {
+    public on<K extends keyof GameEventMap>(type: K, callback: GameEventMap[K], target?: any): void {
         this._et.on(type, callback as any, target);
     }
 
-    public off<K extends keyof GameEventMap>(type: K, callback: GameEventMap[K], target?: any) {
+    public off<K extends keyof GameEventMap>(type: K, callback: GameEventMap[K], target?: any): void {
         this._et.off(type, callback as any, target);
     }
 
-    public emit<K extends keyof GameEventMap>(type: K, ...args: Parameters<GameEventMap[K]>) {
+    public emit<K extends keyof GameEventMap>(type: K, ...args: Parameters<GameEventMap[K]>): void {
         this._et.emit(type, ...args);
     }
 }
@@ -323,15 +323,15 @@ export class RaycastTouch extends Component {
 
     private _ray = new geometry.Ray();
 
-    protected onEnable() {
+    protected onEnable(): void {
         input.on(Input.EventType.TOUCH_START, this.onTouchStart, this);
     }
 
-    protected onDisable() {
+    protected onDisable(): void {
         input.off(Input.EventType.TOUCH_START, this.onTouchStart, this);
     }
 
-    private onTouchStart(event: EventTouch) {
+    private onTouchStart(event: EventTouch): void {
         const touch = event.touch!;
         this.cameraCom.screenPointToRay(touch.getLocationX(), touch.getLocationY(), this._ray);
         if (PhysicsSystem.instance.raycast(this._ray)) {
@@ -368,17 +368,17 @@ macro.ENABLE_MULTI_TOUCH = false;
 
 ```typescript
 // ✅ 正确：onEnable / onDisable 配对
-onEnable() {
+protected onEnable(): void {
     input.on(Input.EventType.TOUCH_START, this.onTouch, this);
     this.node.on(Node.EventType.TOUCH_START, this.onNodeTouch, this);
 }
-onDisable() {
+protected onDisable(): void {
     input.off(Input.EventType.TOUCH_START, this.onTouch, this);
     this.node.off(Node.EventType.TOUCH_START, this.onNodeTouch, this);
 }
 
 // ❌ 错误：只注册不注销 → 事件泄漏
-onLoad() {
+protected onLoad(): void {
     input.on(Input.EventType.TOUCH_START, this.onTouch, this);
 }
 ```
@@ -398,13 +398,13 @@ this.node.on('touch-start', callback, this);
 
 ```typescript
 // ✅ 正确：使用方法引用
-onEnable() {
+protected onEnable(): void {
     input.on(Input.EventType.TOUCH_START, this.onTouch, this);
 }
-private onTouch(event: EventTouch) { /* ... */ }
+private onTouch(event: EventTouch): void { /* ... */ }
 
 // ❌ 不推荐：匿名函数无法取消监听
-onEnable() {
+protected onEnable2(): void {
     input.on(Input.EventType.TOUCH_START, (e) => { /* ... */ });
 }
 ```

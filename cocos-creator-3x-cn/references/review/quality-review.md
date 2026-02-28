@@ -28,7 +28,7 @@ if (!sprite) {
 sprite.spriteFrame = newFrame;
 
 // ✅ 可选链 + 提前返回
-onTouchStart(event: EventTouch) {
+private onTouchStart(event: EventTouch): void {
     const target = this.targetNode;
     if (!target) return;
     // 安全使用 target
@@ -91,13 +91,13 @@ onEnable() {
 }
 
 // ✅ 使用方法引用
-onEnable() {
+protected onEnable(): void {
     input.on(Input.EventType.TOUCH_START, this.handleTouch, this);
 }
-onDisable() {
+protected onDisable(): void {
     input.off(Input.EventType.TOUCH_START, this.handleTouch, this);
 }
-private handleTouch(event: EventTouch) { /* ... */ }
+private handleTouch(event: EventTouch): void: void { /* ... */ }
 ```
 
 ---
@@ -115,7 +115,7 @@ private handleTouch(event: EventTouch) { /* ... */ }
 
 ```typescript
 // ✅ 标准清理模式
-onDestroy() {
+protected onDestroy(): void {
     Tween.stopAllByTarget(this.node);
     this.unscheduleAllCallbacks();
 }
@@ -140,7 +140,7 @@ onDestroy() {
 private _tempVec = new Vec3();
 private _isPlaying = false;
 
-update(dt: number) {
+protected update(dt: number): void {
     if (!this._isPlaying) return;
     
     Vec3.set(this._tempVec, this.speed * dt, 0, 0);

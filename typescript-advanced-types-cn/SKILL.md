@@ -277,14 +277,14 @@ class TypedEventEmitter<T extends Record<string, any>> {
     [K in keyof T]?: Array<(data: T[K]) => void>;
   } = {};
 
-  on<K extends keyof T>(event: K, callback: (data: T[K]) => void): void {
+  public on<K extends keyof T>(event: K, callback: (data: T[K]) => void): void {
     if (!this.listeners[event]) {
       this.listeners[event] = [];
     }
     this.listeners[event]!.push(callback);
   }
 
-  emit<K extends keyof T>(event: K, data: T[K]): void {
+  public emit<K extends keyof T>(event: K, data: T[K]): void {
     const callbacks = this.listeners[event];
     if (callbacks) {
       callbacks.forEach((callback) => callback(data));
@@ -324,7 +324,7 @@ type ExtractBody<T> = T extends { body: infer B } ? B : never;
 type ExtractResponse<T> = T extends { response: infer R } ? R : never;
 
 class APIClient<Config extends Record<string, Record<HTTPMethod, any>>> {
-  async request<Path extends keyof Config, Method extends keyof Config[Path]>(
+  public async request<Path extends keyof Config, Method extends keyof Config[Path]>(
     path: Path,
     method: Method,
     ...[options]: ExtractParams<Config[Path][Method]> extends never
@@ -385,12 +385,12 @@ type IsComplete<T, S> =
 class Builder<T, S extends BuilderState<T> = {}> {
   private state: S = {} as S;
 
-  set<K extends keyof T>(key: K, value: T[K]): Builder<T, S & Record<K, T[K]>> {
+  public set<K extends keyof T>(key: K, value: T[K]): Builder<T, S & Record<K, T[K]>> {
     this.state[key] = value;
     return this as any;
   }
 
-  build(this: IsComplete<T, S> extends true ? this : never): T {
+  public build(this: IsComplete<T, S> extends true ? this : never): T {
     return this.state as T;
   }
 }
@@ -478,7 +478,7 @@ type ValidationErrors<T> = {
 class FormValidator<T extends Record<string, any>> {
   constructor(private rules: FieldValidation<T>) {}
 
-  validate(data: T): ValidationErrors<T> | null {
+  public validate(data: T): ValidationErrors<T> | null {
     const errors: ValidationErrors<T> = {};
     let hasErrors = false;
 

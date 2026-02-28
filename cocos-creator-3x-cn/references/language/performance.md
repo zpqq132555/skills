@@ -98,11 +98,11 @@ class ObjectPool {
             : instantiate(this._prefab);
     }
 
-    public put(node: Node) {
+    public put(node: Node): void {
         this._pool.put(node);
     }
 
-    public clear() {
+    public clear(): void {
         this._pool.clear();
     }
 
@@ -116,7 +116,7 @@ class ObjectPool {
 
 ```typescript
 // ❌ 每帧创建临时对象
-update(dt: number) {
+protected update(dt: number): void {
     const dir = new Vec3(1, 0, 0);
     Vec3.multiplyScalar(dir, dir, this.speed * dt);
     this.node.position = this.node.position.add(dir);
@@ -126,7 +126,7 @@ update(dt: number) {
 private _tempDir = new Vec3();
 private _tempPos = new Vec3();
 
-update(dt: number) {
+protected update(dt: number): void {
     Vec3.set(this._tempDir, 1, 0, 0);
     Vec3.multiplyScalar(this._tempDir, this._tempDir, this.speed * dt);
     Vec3.add(this._tempPos, this.node.position, this._tempDir);
@@ -182,19 +182,19 @@ const result = parts.join(',');
 
 ```typescript
 // ❌ 所有逻辑都放 update（每帧执行）
-update(dt: number) {
+protected update(dt: number): void {
     this.checkEnemies();    // 不需要每帧
     this.updateUI();        // 不需要每帧
     this.movePlayer(dt);    // 需要每帧
 }
 
 // ✅ 低频逻辑使用 schedule
-start() {
+protected start(): void {
     this.schedule(this.checkEnemies, 0.5);  // 每 0.5 秒
     this.schedule(this.updateUI, 0.1);      // 每 0.1 秒
 }
 
-update(dt: number) {
+protected update(dt: number): void {
     this.movePlayer(dt);  // 仅高频逻辑
 }
 ```
@@ -220,7 +220,7 @@ update() {
 
 ```typescript
 // ❌ 每帧 find/getComponent
-update() {
+protected update(): void {
     const player = find('Canvas/Player');
     const hp = player?.getComponent(HealthBar);
 }
@@ -229,7 +229,7 @@ update() {
 private _player: Node | null = null;
 private _hp: HealthBar | null = null;
 
-start() {
+protected start(): void {
     this._player = find('Canvas/Player');
     this._hp = this._player?.getComponent(HealthBar) ?? null;
 }
@@ -239,7 +239,7 @@ start() {
 
 ```typescript
 // ✅ 提前返回减少嵌套
-update(dt: number) {
+protected update(dt: number): void {
     if (!this._isPlaying) return;
     if (!this._target?.isValid) return;
     
@@ -278,7 +278,7 @@ resources.preload('audio/battle', AudioClip);
 
 ```typescript
 // 大量节点分帧创建，避免单帧卡顿
-async createItems(count: number, prefab: Prefab, parent: Node) {
+private async createItems(count: number, prefab: Prefab, parent: Node): Promise<void> {
     const BATCH = 5; // 每帧创建 5 个
     for (let i = 0; i < count; i++) {
         const node = instantiate(prefab);
@@ -300,7 +300,7 @@ private nextFrame(): Promise<void> {
 
 ```typescript
 // 根据游戏进度加载资源
-async loadLevel(level: number) {
+private async loadLevel(level: number): Promise<void> {
     return new Promise<void>((resolve, reject) => {
         assetManager.loadBundle(`level_${level}`, (err, bundle) => {
             if (err) { reject(err); return; }

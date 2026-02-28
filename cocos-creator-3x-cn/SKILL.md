@@ -49,10 +49,10 @@ export class MyComponent extends Component {
     private readonly speed: number = 10;
 
     // 生命周期见 §2
-    protected onLoad() { }
-    protected start() { }
-    protected update(dt: number) { }
-    protected onDestroy() { }
+    protected onLoad(): void { }
+    protected start(): void { }
+    protected update(dt: number): void { }
+    protected onDestroy(): void { }
 }
 ```
 
@@ -159,19 +159,19 @@ import { _decorator, Component, input, Input, EventTouch, EventKeyboard, KeyCode
 
 @ccclass('InputExample')
 export class InputExample extends Component {
-    protected onEnable() {
+    protected onEnable(): void {
         input.on(Input.EventType.TOUCH_START, this.onTouchStart, this);
         input.on(Input.EventType.KEY_DOWN, this.onKeyDown, this);
     }
-    protected onDisable() {
+    protected onDisable(): void {
         input.off(Input.EventType.TOUCH_START, this.onTouchStart, this);
         input.off(Input.EventType.KEY_DOWN, this.onKeyDown, this);
     }
-    private onTouchStart(event: EventTouch) {
+    private onTouchStart(event: EventTouch): void {
         console.log(event.getLocation());     // 屏幕坐标
         console.log(event.getUILocation());   // UI 坐标
     }
-    private onKeyDown(event: EventKeyboard) {
+    private onKeyDown(event: EventKeyboard): void {
         if (event.keyCode === KeyCode.SPACE) { /* ... */ }
     }
 }
@@ -198,7 +198,7 @@ this.node.on(Node.EventType.TOUCH_START, (event: EventTouch) => {
 this.node.on(Node.EventType.TOUCH_START, callback, this, true);
 
 // 事件穿透（v3.4+）
-onTouchStart(event: EventTouch) {
+private onTouchStart(event: EventTouch): void {
     event.preventSwallow = true; // 阻止事件被吞噬
 }
 ```
@@ -209,8 +209,8 @@ onTouchStart(event: EventTouch) {
 import { Event } from 'cc';
 
 class MyEvent extends Event {
-    public detail: any;
-    constructor(name: string, bubbles?: boolean, detail?: any) {
+    public readonly detail: unknown;
+    constructor(name: string, bubbles?: boolean, detail?: unknown) {
         super(name, bubbles);
         this.detail = detail;
     }

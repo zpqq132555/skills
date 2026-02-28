@@ -16,7 +16,7 @@ Laya.loader.load("resources/image.png").then((res: Laya.Texture) => {
 });
 
 // async/await 风格
-async onStart(): Promise<void> {
+public async onStart(): Promise<void> {
     const tex = await Laya.loader.load("resources/image.png");
     let sp = new Laya.Sprite();
     sp.texture = tex;
@@ -111,13 +111,13 @@ Laya.Scene.gc();                 // GC 未被引用的资源
 export class SceneScript extends Laya.Script {
     private _loadedUrls: string[] = [];
 
-    async onStart(): Promise<void> {
+    public async onStart(): Promise<void> {
         const urls = ["a.png", "b.json", "c.atlas"];
         this._loadedUrls = urls;
         await Laya.loader.load(urls);
     }
 
-    onDestroy(): void {
+    public onDestroy(): void {
         // 场景销毁时释放资源
         for (const url of this._loadedUrls) {
             Laya.loader.clearRes(url);
@@ -138,7 +138,7 @@ export class SpawnerScript extends Laya.Script {
     public bulletPrefab: Laya.Prefab;
 
     // 方式一：通过 IDE 绑定 Prefab（推荐）
-    fire(): void {
+    public fire(): void {
         if (this.bulletPrefab) {
             let bullet = this.bulletPrefab.create() as Laya.Sprite3D;
             this.owner.addChild(bullet);
@@ -146,7 +146,7 @@ export class SpawnerScript extends Laya.Script {
     }
 
     // 方式二：代码加载
-    async loadAndSpawn(): Promise<void> {
+    public async loadAndSpawn(): Promise<void> {
         const prefab = await Laya.loader.load("prefab/Bullet.lh", Laya.Loader.HIERARCHY);
         let bullet = prefab.create() as Laya.Sprite3D;
         this.owner.addChild(bullet);
@@ -159,7 +159,7 @@ export class SpawnerScript extends Laya.Script {
 ## 6. 加载进度监听
 
 ```typescript
-async loadWithProgress(): Promise<void> {
+private async loadWithProgress(): Promise<void> {
     const urls = ["a.png", "b.atlas", "c.json"];
 
     // 使用 Laya.loader.load 的第三个参数监听进度

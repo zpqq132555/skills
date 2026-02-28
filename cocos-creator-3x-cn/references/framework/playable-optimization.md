@@ -103,7 +103,7 @@ class BulletPool {
     private _pool = new NodePool('Bullet');
     private _prefab: Prefab | null = null;
 
-    public init(prefab: Prefab) {
+    public init(prefab: Prefab): void {
         this._prefab = prefab;
         // 预热
         for (let i = 0; i < 10; i++) {
@@ -119,23 +119,23 @@ class BulletPool {
         return instantiate(this._prefab!);
     }
 
-    public put(node: Node) {
+    public put(node: Node): void {
         this._pool.put(node);
     }
 
-    public clear() {
+    public clear(): void {
         this._pool.clear();
     }
 }
 
 // 2. 避免 update 中创建临时对象
 // ❌
-update(dt: number) {
+protected update(dt: number): void {
     const pos = new Vec3(this.node.position);  // 每帧创建
 }
 // ✅
 private _tempVec3 = new Vec3();
-update(dt: number) {
+protected update(dt: number): void {
     Vec3.copy(this._tempVec3, this.node.position);
 }
 ```
@@ -193,7 +193,7 @@ function canCollide(a: number, b: number): boolean {
 // 2. 使用加载界面遮罩异步加载
 @ccclass('LoadingScreen')
 export class LoadingScreen extends Component {
-    protected start() {
+    protected start(): void {
         const tasks = [
             this.loadPrefabs(),
             this.loadAudio(),
