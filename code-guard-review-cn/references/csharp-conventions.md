@@ -1,111 +1,72 @@
-# C# / Unity 编码规范参考
+# C# / Unity 参考规范
 
 > 本文件由 `code-guard-review-cn` 技能按需加载。
-> 当项目为 C# / Unity 时读取此文件，获取语言专项约束和性能优化建议。
+> 规则分为三层：
+> - Core：通用 C# 规则
+> - Unity Runtime：Unity 运行时代码的条件规则
+> - Project Profile：项目特定约束，仅在仓库明确采用对应架构时启用
 
 ---
 
 ## 目录
 
-1. [禁用命名空间](#1-禁用命名空间运行时)
-2. [静态修饰符限制](#2-静态修饰符限制)
-3. [热更新兼容约束](#3-热更新兼容约束)
-4. [接口与显式实现](#4-接口与显式实现)
-5. [字典取值优化](#5-字典取值优化)
-6. [列表循环优化](#6-列表循环优化)
-7. [装箱拆箱优化](#7-装箱拆箱优化)
-8. [注释格式](#8-注释格式)
+1. [Core：通用 C# 规则](#1-core通用-c-规则)
+2. [Unity Runtime：运行时代码建议](#2-unity-runtime运行时代码建议)
+3. [Project Profile：项目特定约束](#3-project-profile项目特定约束)
+4. [注释规范落地](#4-注释规范落地)
 
 ---
 
-## 1. 禁用命名空间（运行时）
+## 1. Core：通用 C# 规则
 
-运行时脚本中禁止使用以下命名空间，Editor 环境下可用。
+本节面向大多数 C# 代码，默认可以作为通用建议或条件硬规则使用。
 
-| 命名空间 | 用途 | 禁用原因 |
-|---------|------|---------|
-| `System.Linq` | LINQ 查询 | 产生大量 GC，导致卡顿 |
-| `System.Reflection` | 反射操作 | 性能差，且代码混淆加密后无法正常工作 |
-| `System.Dynamic` | 动态类型 | 绕过静态类型检查（对应通用规则 R5） |
+### 1.1 类型安全与动态能力边界
 
----
+- 避免无说明地使用 `System.Dynamic`。
+- 优先使用静态类型约束、泛型和显式建模，而不是运行时绕过类型系统。
+- 对应通用规则 R5。
 
-## 2. 静态修饰符限制
+### 1.2 集合与查找
 
-整个游戏中，只有 `MgrUtil` 作为管理器入口可使用 `static` 修饰符。
-其他游戏内代码禁止出现静态类、静态属性、静态函数。扩展方法改用配套辅助类调用。
+使用 `TryGetValue` 一步完成存在性检查和取值，避免两次哈希查找。
 
 ```csharp
-// ❌ 禁止
-public class TestAB : MonoBehaviour
+// ❌ 差：两次哈希查找
+if (dict.ContainsKey(id))
 {
-    public static TestAB Instance;
-    public static int TotalNumber;
+    return dict[id];
 }
 
-// ✅ 通过 MgrUtil 统一入口访问
-MgrUtil.XXX.DoSomething();
-```
-
----
-
-## 3. 热更新兼容约束
-
-受 Inject 热更方案限制，以下模式在运行时需要避免：
-
-### 3.1 禁止 Delegate/Event 的 `+=` 合并
-
-Inject 热更无法处理 `+=` 合并后的委托，且大量合并时性能差。
-
-```csharp
-// ❌ 禁止
-Action testAction = null;
-testAction += Load;
-
-// ✅ 方案 A：使用集合组合
-List<Action> testActionList = new List<Action>();
-testActionList.Add(Load);
-
-// ✅ 方案 B：使用引擎事件系统
-private LTCommonRuntime.EventFast.IFastEvent<int> testEvent;
-testEvent = new LTCommonRuntime.EventFast.TFastEvent();
-testEvent.On(EventFastHandler);
-testEvent.Send(1);
-testEvent.Off(EventFastHandler);
-testEvent.Clear();
-```
-
-### 3.2 构造函数内禁止业务逻辑
-
-Inject 热更无法替换构造函数内的逻辑，后续调整困难。
-
-```csharp
-// ❌ 禁止在构造函数内写业务逻辑
-public CustomData(int dataId)
+// ✅ 好：一次哈希查找
+if (dict.TryGetValue(id, out var value))
 {
-    this.dataId = dataId;
-    // ... 其他初始化逻辑
-}
-
-// ✅ 将逻辑移到 Init 方法
-public CustomData(int dataId)
-{
-    Init(dataId);
-}
-
-private void Init(int dataId)
-{
-    this.dataId = dataId;
-    // ... 其他初始化逻辑
+    return value;
 }
 ```
 
----
+### 1.3 泛型集合与装箱拆箱
 
-## 4. 接口与显式实现
+- 非必要不使用装箱拆箱，优先使用泛型集合。
+- 避免非泛型集合导致的运行时装箱拆箱和类型风险。
 
-管理类通过接口对外开放访问权限（对应通用规则 R14）。
-实现接口时推荐显式实现，收窄暴露范围。
+```csharp
+// ❌ 禁止非泛型集合
+ArrayList numbers = new ArrayList();
+numbers.Add(123);            // 装箱
+int number = (int)numbers[0]; // 拆箱
+
+// ✅ 使用泛型集合
+List<int> numbers = new List<int>();
+numbers.Add(123);            // 无装箱
+int number = numbers[0];     // 无拆箱
+```
+
+### 1.4 接口与封装
+
+- 对外暴露能力时优先通过接口收窄访问面。
+- 显式接口实现是可选手段，用于进一步减少公共暴露，而不是所有场景的强制要求。
+- 对应通用规则 R14。
 
 ```csharp
 // ✅ 接口显式实现
@@ -120,44 +81,28 @@ public class Student : IAge
 
 ---
 
-## 5. 字典取值优化
+## 2. Unity Runtime：运行时代码建议
 
-使用 `TryGetValue` 一步完成存在性检查和取值，避免两次哈希查找。
+本节仅在 Unity 运行时代码中重点适用。
+默认作为“条件硬规则”或“强建议”，不作为无条件禁令。
 
-```csharp
-// ❌ 差：两次哈希查找
-if (MgrUtil.Archive.GameCurrency.ContainsKey(id))
-{
-    return MgrUtil.Archive.GameCurrency[id].Name;
-}
+### 2.1 LINQ 使用边界
 
-// ❌ 极差：LINQ 线性遍历
-MgrUtil.Archive.GameCurrency.Find(v => v.Id == id).Name;
+- 高频运行时路径默认避免 `System.Linq`，因为可能引入额外分配和可见的帧开销。
+- 非热点逻辑、工具脚本或 Editor 代码可结合可读性权衡。
 
-// ✅ 好：一次哈希查找
-if (MgrUtil.Archive.GameCurrency.TryGetValue(id, out var currencyItem))
-{
-    return currencyItem.Name;
-}
-```
+### 2.2 Reflection 使用边界
 
----
+- 运行时谨慎使用 `System.Reflection`。
+- 当涉及性能、AOT/裁剪、混淆、热更兼容或移动端敏感路径时，优先寻找静态替代方案。
 
-## 6. 列表循环优化
+### 2.3 热点循环优化
 
-循环前缓存列表引用和 `Count`，避免每次迭代重复访问属性和安全性检查。
+- 在热点循环中关注重复属性访问、临时分配和空判断成本。
+- 必要时缓存集合引用和 `Count`，但不要为了机械套模板而牺牲可读性。
 
 ```csharp
-// ❌ 差：每次循环都重新读取属性
-for (int i = 0; i < player.curDisable.Count; ++i)
-{
-    if (player.curDisable[i] != null && !player.curDisable[i].activeSelf)
-    {
-        player.curDisable[i].SetActive(true);
-    }
-}
-
-// ✅ 好：缓存引用和计数
+// ✅ 在热点路径中可考虑缓存引用和计数
 var disableList = player.curDisable;
 int count = disableList.Count;
 for (int i = 0; i < count; ++i)
@@ -170,42 +115,99 @@ for (int i = 0; i < count; ++i)
 }
 ```
 
----
+### 2.4 数据访问与结构选择
 
-## 7. 装箱拆箱优化
-
-非必要不使用装箱拆箱，优先使用泛型集合。
-
-```csharp
-// ❌ 禁止非泛型集合
-ArrayList numbers = new ArrayList();
-numbers.Add(123);           // 装箱
-int number = (int)numbers[0]; // 拆箱
-
-// ✅ 使用泛型集合
-List<int> numbers = new List<int>();
-numbers.Add(123);           // 无装箱
-int number = numbers[0];    // 无拆箱
-```
+- 已有字典结构时优先 `TryGetValue`，不要退化为 `ContainsKey + 索引` 或不必要的线性查找。
+- 若某段逻辑频繁依赖线性查找，应审视是否选错了数据结构。
 
 ---
 
-## 8. 注释格式
+## 3. Project Profile：项目特定约束
 
-C# 使用 `///` XML 文档注释，对应通用规则 R12。
+本节不是通用 Unity 规则。
+只有当仓库明确采用对应架构、热更方案或基础设施时才启用。
+
+### 3.1 集中式静态入口约束
+
+- 若项目采用统一管理器入口架构，则限制新增 `static`。
+- 指定入口类可以作为例外；该入口由项目自身约定，例如 `MgrUtil`。
+- 该规则属于项目约束，不可提升为通用 C# / Unity 规则。
+
+```csharp
+// ✅ 在项目约定入口中统一访问
+MgrUtil.XXX.DoSomething();
+```
+
+### 3.2 Inject 热更兼容约束
+
+若项目采用 Inject 热更方案，则运行时代码需额外关注以下限制：
+
+#### 3.2.1 Delegate / Event 的 `+=` 合并
+
+- 若项目热更框架无法处理合并后的委托，则避免在运行时主逻辑中依赖 `+=` 聚合。
+- 可改为使用集合组合，或遵循项目约定的事件系统。
+
+```csharp
+// ❌ 仅在对应热更方案受限时避免
+Action testAction = null;
+testAction += Load;
+
+// ✅ 方案 A：使用集合组合
+List<Action> testActionList = new List<Action>();
+testActionList.Add(Load);
+```
+
+#### 3.2.2 构造函数内的业务逻辑
+
+- 若热更机制无法替换构造函数逻辑，则业务初始化应移动到 `Init`、`Setup` 或生命周期方法中。
+
+```csharp
+// ✅ 将可变业务初始化移到 Init 方法
+public CustomData(int dataId)
+{
+    Init(dataId);
+}
+
+private void Init(int dataId)
+{
+    this.dataId = dataId;
+    // ... 其他初始化逻辑
+}
+```
+
+### 3.3 项目专用事件系统约束
+
+- 若项目采用自定义事件系统，则优先遵循该系统约定。
+- 这类约束仅对采用该系统的仓库有效，不应写成通用 C# / Unity 规则。
+
+---
+
+## 4. 注释规范落地
+
+### 4.1 C# 文档注释形式
+
+- 公开类型和公开方法优先使用 `///` XML 文档注释承接通用规则 R12。
+- 参数与返回值说明应保持中文、准确、可帮助维护者理解真实意图。
 
 ```csharp
 /// <summary>
-/// 类/接口的文档注释
+/// 控制角色移动与状态切换。
 /// </summary>
-public class PlayerController { }
-
-/// <summary>
-/// 非私有函数的文档注释
-/// </summary>
-/// <param name="damage">伤害值</param>
-/// <returns>剩余生命值</returns>
-public int TakeDamage(int damage) { }
-
-// 复杂内部逻辑使用行注释
+public class PlayerController
+{
+    /// <summary>
+    /// 处理伤害结算并返回剩余生命值。
+    /// </summary>
+    /// <param name="damage">本次受到的伤害值。</param>
+    /// <returns>结算后的剩余生命值。</returns>
+    public int TakeDamage(int damage)
+    {
+        return 0;
+    }
+}
 ```
+
+### 4.2 复杂内部逻辑注释
+
+- 复杂私有/内部方法使用中文行注释说明关键意图、边界与限制。
+- 注释优先解释“为什么这样做”，避免机械复述代码动作。
