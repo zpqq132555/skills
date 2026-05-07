@@ -1,0 +1,96 @@
+schema: spec-driven
+
+context: |
+  语言：中文（简体）
+  所有产出物必须用简体中文撰写。
+
+  当前技术栈：
+  - Unity
+  - C#
+  - TypeScript
+  - Cocos Creator
+  - Node.js
+  - H5 游戏
+
+  ========================
+  【全局开发规范】
+  ========================
+
+  【代码质量】
+  - 优先保证正确性，再优化性能
+  - 优先修复根因，而不是临时补丁
+  - 禁止硬编码
+  - 优先配置化
+  - 优先模块化
+  - 避免 God Class
+  - 保持低耦合
+
+  【TypeScript】
+  - 所有新代码必须使用 TypeScript
+  - 禁止 any
+  - 优先 unknown
+  - 优先 interface
+  - 函数必须声明返回类型
+  - 优先类型安全
+  - 优先类型守卫
+  - 禁止无意义类型断言
+
+  【C# / Unity】
+  - 禁止 FindObjectOfType
+  - 优先对象池
+  - 优先缓存引用
+  - 热路径避免 LINQ
+  - 热路径避免反射
+  - 优先 TryGetValue
+  - 避免 GC Alloc
+
+  【Cocos】
+  - Bundle 必须按模块划分
+  - 避免资源循环引用
+  - 优先异步加载
+  - 避免全局单例滥用
+
+  【注释规范】
+  - 所有公开 API 必须添加中文注释
+  - 复杂逻辑必须解释“为什么”
+  - 注释必须使用中文
+  - 禁止无意义注释
+
+  【工作流】
+  - 先分析问题
+  - 再给出方案
+  - 再修改代码
+  - 最后进行 review
+
+  ========================
+  【代码审查规范】
+  ========================
+
+  修改代码时：
+  - 必须检查类型安全
+  - 必须检查边界条件
+  - 必须检查空引用风险
+  - 必须检查性能风险
+  - 必须检查 this 指向问题
+  - 必须检查异步竞态问题
+
+  ========================
+  【高级类型系统】
+  ========================
+
+  TypeScript 涉及以下内容时：
+  - Generics
+  - infer
+  - Conditional Types
+  - Mapped Types
+  - Template Literal Types
+
+  必须优先保证：
+  - 可读性
+  - 类型安全
+  - 可维护性
+
+references:
+  - ./references/csharp-conventions.md
+  - ./references/typescript-advanced-types.md
+  - ./references/SKILL.md
