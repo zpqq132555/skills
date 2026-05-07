@@ -442,3 +442,146 @@ setTimeout(() => {
 ```
 
 始终确保回调中的 `this` 指向当前实例：优先使用箭头函数，其次用 `.bind(this)`。
+
+---
+
+## 10. 访问修饰符与作用域最小化
+
+> 本条为 TypeScript 代码审查的**硬规则**，对应 `P-TS-MOD`。
+> 所有类成员必须显式声明访问修饰符，并按最小化作用域原则逐级论证。
+
+### 10.1 为什么需要显式访问修饰符
+
+TypeScript 默认类成员为 `public`（与 C# 不同）。省略修饰符意味着：
+- 无法区分"有意暴露"和"忘记标记为私有"
+- 审查者无法判断每个成员的预期可见面
+- 随着类膨胀，public 面持续扩大且无人察觉
+
+因此，**所有类成员必须显式添加 `private` / `protected` / `public`**，从语法层面消除歧义。
+
+### 10.2 需要声明修饰符的对象
+
+| 成员类型 | 示例 | 说明 |
+|---------|------|------|
+| 实例属性 | `private _name: string;` | 必须显式声明 |
+| 静态属性 | `private static MAX_SIZE = 100;` | 必须显式声明 |
+| 实例方法 | `public getName(): string { ... }` | 必须显式声明 |
+| 静态方法 | `private static validate(v: string): boolean { ... }` | 必须显式声明 |
+| getter | `public get name(): string { ... }` | 必须显式声明 |
+| setter | `private set name(v: string) { ... }` | 必须显式声明 |
+| 参数属性 | `constructor(private _name: string) {}` | 修饰符即为访问修饰符 |
+
+不受此约束的对象：
+- `interface` / `type` 成员（类型空间，非运行时）
+- 普通函数参数（非参数属性）
+- 回调/箭头函数（无类上下文）
+
+### 10.3 错误示例
+
+```typescript
+// ❌ 所有成员均缺少访问修饰符
+class UserService {
+  name: string;              // 隐式 public，意图不明
+  privateApiUrl: string;     // 命名暗示 private，但实际是 public
+
+  constructor(url: string) { // 参数未声明为属性，缺少修饰符
+    this.privateApiUrl = url;
+  }
+
+  fetchUser(id: number) {    // 隐式 public
+    // ...
+  }
+
+  validateInput(input: unknown): boolean {  // 隐式 public
+    // ...
+  }
+}
+```
+
+### 10.4 正确示例
+
+```typescript
+// ✅ 所有成员显式声明，作用域最小化
+class UserService {
+  /** 用户服务的基础 API 地址 */
+  private readonly _baseUrl: string;
+
+  /**
+   * @param baseUrl API 基础地址
+   */
+  public constructor(baseUrl: string) {
+    this._baseUrl = baseUrl;
+  }
+
+  /** 根据 ID 获取用户信息 */
+  public fetchUser(id: number): Promise<User> {
+    return this._request(`/users/${id}`);
+  }
+
+  /** 校验用户输入数据的合法性 */
+  private validateInput(input: unknown): input is UserInput {
+    return (
+      typeof input === 'object' &&
+      input !== null &&
+      'name' in input &&
+      'email' in input
+    );
+  }
+
+  /** 发起 HTTP 请求（内部方法，子类可覆写） */
+  protected async _request(path: string): Promise<any> {
+    const response = await fetch(`${this._baseUrl}${path}`);
+    return response.json();
+  }
+}
+```
+
+### 10.5 作用域最小化论证链
+
+决策顺序（按优先级从高到低）：
+
+```
+1. private  ──→  默认选择，满足封装性
+2. protected ──→ 仅当子类确实需要访问或覆写此成员
+3. public   ──→ 仅当外部调用者、模板或框架确实需要访问
+```
+
+将成员扩大为 `public` 或 `protected` 时，必须：
+- 在注释中说明哪些外部调用者/子类依赖此成员
+- 说明接口稳定性承诺（是否可自由修改实现）
+
+### 10.6 修饰符书写顺序
+
+按 TypeScript 社区惯例和官方文档风格，类成员修饰符的推荐顺序为：
+
+```
+访问修饰符 → static → readonly → abstract
+```
+
+示例：
+
+```typescript
+private static readonly DEFAULT_TIMEOUT = 5000;   // ✅
+public abstract render(): void;                    // ✅
+protected readonly id: string;                     // ✅
+```
+
+### 10.7 审查检查清单
+
+审查 TypeScript 代码时，按以下顺序检查每个类：
+
+1. **是否所有属性都有显式访问修饰符？** — 逐个检查属性声明。
+2. **是否所有方法都有显式访问修饰符？** — 逐个检查方法声明。
+3. **是否所有 getter/setter 都有显式访问修饰符？** — getter/setter 可各自独立设置。
+4. **每个 `public` 成员是否有充分理由？** — 逆推：能否改为 `private` 或 `protected`？
+5. **暴露面的注释是否说明了调用者和稳定性？** — 检查 `public` 和 `protected` 成员的 JSDoc。
+
+### 10.8 违规等级
+
+| 违规 | 等级 | 说明 |
+|------|------|------|
+| 类成员缺少显式访问修饰符 | 🟡 中危 | 每个缺失修饰符的成员计为一项 |
+| 构造函数参数属性缺少修饰符 | 🟡 中危 | 参数属性是类 API 的一部分 |
+| `public` 成员无外部引用证据 | 🔵 低危 | 建议收紧为 `private` |
+| `protected` 成员无子类引用 | 🔵 低危 | 建议收紧为 `private` |
+| 大量 `public` 成员未说明暴露理由 | 🟡 中危 | 3+ 个未注释的 `public` 成员 |
