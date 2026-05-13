@@ -1,6 +1,6 @@
 ---
 name: layaair-1x-cn
-description: 提供 LayaAir 1.0 游戏引擎的全面开发指导，包括 Sprite 显示对象、EventDispatcher 事件系统、Laya.loader 资源加载、Tween 缓动、Timer 定时器、文本与 UI 系统及性能优化。当用户编写或重构 LayaAir 1.0 TypeScript 代码、实现事件监听、资源加载、缓动动画或优化可试玩广告时触发。也适用于提到 Laya.init、Laya.stage、Laya.loader、Laya.Tween、laya.display.Sprite、laya.utils.Handler、laya.events.EventDispatcher 等 LayaAir 1.x API 时使用。
+description: 提供 LayaAir 1.0 游戏引擎的全面开发指导，包括 Sprite 显示对象、EventDispatcher 事件系统、Laya.loader 资源加载、Tween 缓动、Timer 定时器、文本与 UI 系统及性能优化。当用户明确在编写或重构 LayaAir 1.x TypeScript 代码，且上下文明显偏向无 Script/Component 组件体系的旧版显示树与纯代码驱动结构时触发。也适用于明确提到 `laya.display.Sprite`、`laya.utils.Handler`、`laya.events.EventDispatcher`、`laya.ani.bone.Skeleton`、`MovieClip` 等 LayaAir 1.x 风格 API 时使用。仅出现 `Laya.init`、`Laya.stage`、`Laya.loader`、`Laya.Tween` 等跨版本通用 API 时，不应默认触发；应先结合上下文判断是否确为 1.x。
 ---
 
 # LayaAir 1.0 开发规范
@@ -15,6 +15,8 @@ description: 提供 LayaAir 1.0 游戏引擎的全面开发指导，包括 Sprit
 ## 技能用途
 
 此技能为 LayaAir 1.0 项目提供全面的开发规范指导（**TypeScript 严格模式优先**）：
+
+若用户只提到通用 `Laya.*` API 而没有版本信号，默认不要加载本技能；优先寻找旧版命名空间、无组件脚本结构或 1.x 特有用法再判断。
 
 **优先级 1：代码质量与规范**
 - TypeScript 严格类型、访问修饰符（public/private/protected）

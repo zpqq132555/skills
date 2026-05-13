@@ -1,6 +1,6 @@
 ---
 name: layaair-2x-cn
-description: 提供 LayaAir 2.0 游戏引擎的全面开发指导，包括脚本组件系统（Script/Component 生命周期）、EventDispatcher 事件系统、Laya.loader 资源加载、Tween 缓动、Timer 定时器、显示对象（Sprite/Text/Image）、UI 系统以及可试玩广告优化。当用户编写或重构 LayaAir 2.0 TypeScript 代码、实现脚本组件、处理事件监听、资源加载、缓动动画、性能优化及可试玩广告项目时触发。也适用于提到 Laya.init、Laya.stage、Laya.loader、Laya.Tween、laya.display.Sprite、laya.utils.Handler、laya.events.EventDispatcher 等 LayaAir 2.x API 时使用。
+description: 提供 LayaAir 2.0 游戏引擎的全面开发指导，包括脚本组件系统（Script/Component 生命周期）、EventDispatcher 事件系统、Laya.loader 资源加载、Tween 缓动、Timer 定时器、显示对象（Sprite/Text/Image）、UI 系统以及可试玩广告优化。当用户明确在编写或重构 LayaAir 2.x TypeScript 代码，且上下文明显包含 Script/Component 组件体系、生命周期方法、IDE 生成 UI 类或场景工作流时触发。也适用于明确提到 `onAwake`、`onEnable`、`onStart`、`onUpdate`、`onDisable`、`onDestroy`、`Script`、`Component`、`Scene`、IDE 生成 UI 等 LayaAir 2.x 典型信号时使用。仅出现 `Laya.init`、`Laya.stage`、`Laya.loader`、`Laya.Tween` 或 `laya.display.Sprite` 等跨版本通用 API 时，不应默认触发；应先结合上下文判断是否确为 2.x。
 ---
 
 # LayaAir 2.0 开发规范
@@ -15,6 +15,8 @@ description: 提供 LayaAir 2.0 游戏引擎的全面开发指导，包括脚本
 ## 技能用途
 
 此技能为 LayaAir 2.0 项目提供全面的开发规范指导（**TypeScript 严格模式优先**）：
+
+若用户只提到通用 `Laya.*` API 而没有版本信号，默认不要加载本技能；优先寻找组件生命周期、IDE UI、场景加载等 2.x 特征再判断。
 
 **优先级 1：代码质量与规范**
 - TypeScript 严格类型、访问修饰符（public/private/protected）
