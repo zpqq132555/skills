@@ -1,5 +1,5 @@
 ---
-name: layaair-2x-cn
+name: layaair-v2
 description: 提供 LayaAir 2.0 游戏引擎的全面开发指导，包括脚本组件系统（Script/Component 生命周期）、EventDispatcher 事件系统、Laya.loader 资源加载、Tween 缓动、Timer 定时器、显示对象（Sprite/Text/Image）、UI 系统以及可试玩广告优化。当用户明确在编写或重构 LayaAir 2.x TypeScript 代码，且上下文明显包含 Script/Component 组件体系、生命周期方法、IDE 生成 UI 类或场景工作流时触发。也适用于明确提到 `onAwake`、`onEnable`、`onStart`、`onUpdate`、`onDisable`、`onDestroy`、`Script`、`Component`、`Scene`、IDE 生成 UI 等 LayaAir 2.x 典型信号时使用。仅出现 `Laya.init`、`Laya.stage`、`Laya.loader`、`Laya.Tween` 或 `laya.display.Sprite` 等跨版本通用 API 时，不应默认触发；应先结合上下文判断是否确为 2.x。
 ---
 
