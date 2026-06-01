@@ -53,13 +53,13 @@ AGENTS_BAK.md -> .claude\CLAUDE.md
 
 | 目录 | 用途 |
 |---|---|
-| `cocos-creator-2x-cn/` | Cocos Creator 2.x 开发指导 |
-| `cocos-creator-3x-cn/` | Cocos Creator 3.x 开发指导 |
+| `cocos-creator-v2/` | Cocos Creator 2.x 开发指导 |
+| `cocos-creator-v3/` | Cocos Creator 3.x 开发指导 |
 | `code-guard-review-cn/` | 代码审查与结构质量检查 |
-| `layaair-1x-cn/` | LayaAir 1.x 开发指导 |
-| `layaair-2x-cn/` | LayaAir 2.x 开发指导 |
-| `layaair-3x-cn/` | LayaAir 3.x 开发指导 |
-| `unity-2022-cn/` | Unity 2022 开发指导 |
+| `layaair-v1/` | LayaAir 1.x 开发指导 |
+| `layaair-v2/` | LayaAir 2.x 开发指导 |
+| `layaair-v3/` | LayaAir 3.x 开发指导 |
+| `unity-2022/` | Unity 2022 开发指导 |
 
 ## 关于 `link-agents.bat`
 
